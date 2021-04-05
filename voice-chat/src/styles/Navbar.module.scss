@@ -1,0 +1,50 @@
+.appBar {
+    background: #1976d2;
+}
+
+.toolbar {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+
+    .search_wrapper {
+        display: flex;
+        align-items: center;
+
+        .title {
+            font-size: 2rem;
+        }
+
+        .search {
+            width: 30rem;
+            margin-left: 7rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            position: relative;
+            color: #fff;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.25);
+            }
+
+            &_input {
+                font-size: 1.6rem;
+                color: #fff;
+                padding: 0.8rem;
+                padding-left: 4.8rem;
+            }
+
+            &_icon {
+                position: absolute;
+                height: 100%;
+                left: 1.15rem;
+
+                svg {
+                    height: 100%;
+                    width: 2.5rem;
+                }
+            }
+        }
+    }
+}

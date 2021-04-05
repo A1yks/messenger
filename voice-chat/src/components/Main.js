@@ -4,13 +4,14 @@ import Content from './Content';
 import styles from '../styles/Main.module.scss';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Auth from './Auth';
+import LeftMenu from './LeftMenu';
 
 function Main() {
     return (
         <Switch>
             <Route exact path="/">
                 <div className={styles.wrapper}>
-                    <Navbar />
+                    <LeftMenu />
                     <Content />
                 </div>
             </Route>
