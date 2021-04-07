@@ -3,7 +3,9 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin: 1.5rem auto;
+    overflow-y: overlay;
+    flex-grow: 1;
+    margin: 1.5rem auto 0 auto;
 
     .titleWrapper {
         width: 90%;

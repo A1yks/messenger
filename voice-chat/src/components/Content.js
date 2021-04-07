@@ -6,7 +6,7 @@ import styles from '../styles/Content.module.scss';
 function Content() {
     return (
         <div className={styles.main}>
-            <Navbar chatName="Test 1" />
+            <Navbar chatName="Test 2" />
             <ChatBody />
         </div>
     );

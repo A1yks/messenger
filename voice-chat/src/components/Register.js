@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import styles from '../styles/Auth.module.scss';
 import { useAuthContext } from '../context/AuthContext';
 
@@ -51,8 +52,9 @@ function Register() {
                     label: styles.login_label,
                 }}
                 onClick={(e) => handleClick(e, 'signUp')}
+                disabled={state.loading}
             >
-                Создать аккаунт
+                {state.loading ? <CircularProgress color="#fff" size="2.4rem" /> : 'Создать аккаунт'}
             </Button>
         </>
     );

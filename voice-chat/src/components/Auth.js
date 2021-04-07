@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import styles from '../styles/Auth.module.scss';
@@ -15,6 +15,9 @@ function Auth() {
                         </Route>
                         <Route exact path="/auth/register">
                             <Register />
+                        </Route>
+                        <Route path="/auth">
+                            <Redirect to="/auth/login" />
                         </Route>
                     </Switch>
                 </form>

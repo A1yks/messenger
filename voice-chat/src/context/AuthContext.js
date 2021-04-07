@@ -10,6 +10,7 @@ export function AuthContextProvider() {
         login: '',
         password: '',
         passwordConf: '',
+        loading: false,
     });
 
     const errorTexts = [
@@ -47,18 +48,26 @@ export function AuthContextProvider() {
         if (type.current === 'signUp') {
             console.log(errors.signUp);
             if (Object.values(errors.signUp).every((value) => value === '')) {
+                setState((prev) => ({ ...prev, loading: true }));
                 fetch('/register', {
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        login: state.login,
+                        username: state.login,
                         password: state.password,
                     }),
                 })
-                    .then((a) => a.json())
-                    .then(console.log);
+                    .then((res) => res.json())
+                    .then(({ success, message }) => {
+                        setState((prev) => ({ ...prev, loading: false }));
+                        if (!success)
+                            setErrors((prev) => ({
+                                ...prev,
+                                signUp: { ...prev.signUp, login: message },
+                            }));
+                    });
             }
         }
     }, [errors.signUp]);
@@ -78,7 +87,7 @@ export function AuthContextProvider() {
 
     function resetState(authType) {
         type.current = null;
-        setState({ login: '', password: '', passwordConf: '' });
+        setState({ login: '', password: '', passwordConf: '', loading: false });
         setErrors((prev) => ({
             ...prev,
             [authType]: { login: '', password: '', passwordConf: '' },
@@ -134,9 +143,7 @@ export function AuthContextProvider() {
     }
 
     return (
-        <AuthContext.Provider
-            value={{ handleClick, handleChange, errors, setErrors, state, setState, resetState }}
-        >
+        <AuthContext.Provider value={{ handleClick, handleChange, errors, setErrors, state, setState, resetState }}>
             <Main />
         </AuthContext.Provider>
     );
