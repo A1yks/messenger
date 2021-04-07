@@ -18,7 +18,7 @@ mongoose.connect(
         useUnifiedTopology: true,
         useFindAndModify: false,
     },
-    (err) => (err ? console.log(err) : console.log('Connected'))
+    (err) => (err ? console.error(err) : console.log('Connected'))
 );
 
 app.listen(process.env.PORT || 3001);
