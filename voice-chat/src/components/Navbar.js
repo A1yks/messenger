@@ -10,45 +10,27 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MoreIcon from '@material-ui/icons/MoreVert';
+import PhoneIcon from '@material-ui/icons/Phone';
+import CloseIcon from '@material-ui/icons/Close';
+import PersonIcon from '@material-ui/icons/Person';
 import classes from '../styles/Navbar.module.scss';
 
-function Navbar() {
+function Navbar({ chatName }) {
     return (
-        <AppBar className={classes.appBar} position="static">
+        <AppBar className={classes.appBar} position="sticky">
             <Toolbar className={classes.toolbar}>
-                <div className={classes.search_wrapper}>
+                <div className={classes.chatName}>
+                    <PersonIcon />
                     <Typography className={classes.title} variant="h6" noWrap>
-                        Material-UI
+                        {chatName}
                     </Typography>
-                    <div className={classes.search}>
-                        <div className={classes.search_icon}>
-                            <SearchIcon />
-                        </div>
-                        <InputBase
-                            placeholder="Поиск пользователей"
-                            classes={{
-                                root: classes.search_root,
-                                input: classes.search_input,
-                            }}
-                        />
-                    </div>
                 </div>
                 <div className={classes.icons}>
-                    <IconButton aria-label="show 4 new mails" color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <MailIcon />
-                        </Badge>
+                    <IconButton edge="end" color="inherit" title="Позвонить">
+                        <PhoneIcon />
                     </IconButton>
-                    <IconButton aria-label="show 17 new notifications" color="inherit">
-                        <Badge badgeContent={17} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
-                    <IconButton edge="end" aria-label="account of current user" color="inherit">
-                        <AccountCircle />
+                    <IconButton edge="end" color="inherit" title="Закрыть чат">
+                        <CloseIcon />
                     </IconButton>
                 </div>
             </Toolbar>
