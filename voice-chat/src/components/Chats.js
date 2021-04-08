@@ -33,7 +33,7 @@ function Chats() {
                     <span className={styles.date}>22.03.2017</span>
                 </div>
             </Button>
-            <Button className={`${styles.chatBlock} ${styles.selected}`}>
+            <Button className={styles.chatBlock}>
                 <div className={styles.wrapper}>
                     <Account username="Test 2" src="https://material-ui.com/static/images/avatar/3.jpg" />
                     <span className={styles.date}>22.03.2017</span>
@@ -51,7 +51,7 @@ function Chats() {
                     <span className={styles.date}>22.03.2017</span>
                 </div>
             </Button>
-            <Button className={`${styles.chatBlock} ${styles.selected}`}>
+            <Button className={styles.chatBlock}>
                 <div className={styles.wrapper}>
                     <Account username="Test 2" src="https://material-ui.com/static/images/avatar/3.jpg" />
                     <span className={styles.date}>22.03.2017</span>
@@ -69,7 +69,7 @@ function Chats() {
                     <span className={styles.date}>22.03.2017</span>
                 </div>
             </Button>
-            <Button className={`${styles.chatBlock} ${styles.selected}`}>
+            <Button className={styles.chatBlock}>
                 <div className={styles.wrapper}>
                     <Account username="Test 2" src="https://material-ui.com/static/images/avatar/3.jpg" />
                     <span className={styles.date}>22.03.2017</span>
@@ -87,7 +87,7 @@ function Chats() {
                     <span className={styles.date}>22.03.2017</span>
                 </div>
             </Button>
-            <Button className={`${styles.chatBlock} ${styles.selected}`}>
+            <Button className={styles.chatBlock}>
                 <div className={styles.wrapper}>
                     <Account username="Test 2" src="https://material-ui.com/static/images/avatar/3.jpg" />
                     <span className={styles.date}>22.03.2017</span>

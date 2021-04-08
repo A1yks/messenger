@@ -3,15 +3,13 @@ import { connect } from 'react-redux';
 import { mapDispatchToProps } from '../functions/mapDispatchToProps';
 // import styles from '../styles/App.module.scss';
 import { Router } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
-import { AuthContextProvider } from '../context/AuthContext';
-
-const history = createBrowserHistory();
+import history from '../history';
+import Main from '../components/Main';
 
 function App() {
     return (
         <Router history={history}>
-            <AuthContextProvider />
+            <Main />
         </Router>
     );
 }

@@ -1,21 +1,22 @@
 import React from 'react';
-import Content from './Content';
-import styles from '../styles/Main.module.scss';
 import { Switch, Route } from 'react-router-dom';
 import Auth from './Auth';
-import LeftMenu from './LeftMenu';
+import ChatMainPage from './ChatMainPage';
+import { AuthContextProvider } from '../context/AuthContext';
+import { MainPageContextProvider } from '../context/MainPageContext';
 
 function Main() {
     return (
         <Switch>
             <Route exact path="/">
-                <div className={styles.wrapper}>
-                    <LeftMenu />
-                    <Content />
-                </div>
+                <MainPageContextProvider>
+                    <ChatMainPage />
+                </MainPageContextProvider>
             </Route>
             <Route path="/auth">
-                <Auth />
+                <AuthContextProvider>
+                    <Auth />
+                </AuthContextProvider>
             </Route>
         </Switch>
     );

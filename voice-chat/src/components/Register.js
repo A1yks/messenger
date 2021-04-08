@@ -54,7 +54,7 @@ function Register() {
                 onClick={(e) => handleClick(e, 'signUp')}
                 disabled={state.loading}
             >
-                {state.loading ? <CircularProgress color="#fff" size="2.4rem" /> : 'Создать аккаунт'}
+                {state.loading ? <CircularProgress classes={{ colorPrimary: styles.colorPrimary }} size="2.4rem" /> : 'Создать аккаунт'}
             </Button>
         </>
     );

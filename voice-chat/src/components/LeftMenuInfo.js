@@ -5,12 +5,13 @@ import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import Account from './Account';
 import styles from '../styles/LeftMenuInfo.module.scss';
+import { connect } from 'react-redux';
 
-function LeftMenuInfo() {
+function LeftMenuInfo({ username, avatar }) {
     return (
         <div className={styles.main}>
             <div className={styles.account}>
-                <Account username="My Account" src="https://material-ui.com/static/images/avatar/1.jpg" />
+                <Account username={username} src={avatar} />
                 <IconButton className={styles.settingsBtn}>
                     <Settings />
                 </IconButton>
@@ -31,4 +32,10 @@ function LeftMenuInfo() {
     );
 }
 
-export default LeftMenuInfo;
+export default connect(
+    (state) => ({
+        username: state.userData.username,
+        avatar: state.userData.avatar,
+    }),
+    null
+)(LeftMenuInfo);

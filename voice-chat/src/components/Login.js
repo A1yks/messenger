@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import styles from '../styles/Auth.module.scss';
 import { useAuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -40,8 +41,9 @@ function Login() {
                     label: styles.login_label,
                 }}
                 onClick={(e) => handleClick(e, 'signIn')}
+                disabled={state.loading}
             >
-                Войти
+                {state.loading ? <CircularProgress classes={{ colorPrimary: styles.colorPrimary }} size="2.4rem" /> : 'Войти'}
             </Button>
             <div className={styles.register}>
                 <p>

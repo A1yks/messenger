@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import Main from '../components/Main';
+import history from '../history';
+import checkToken from '../functions/checkToken';
 
 export const AuthContext = React.createContext();
 
 export const useAuthContext = () => useContext(AuthContext);
 
-export function AuthContextProvider() {
+export function AuthContextProvider({ children }) {
     const [state, setState] = useState({
         login: '',
         password: '',
         passwordConf: '',
         loading: false,
+        autoLogin: true,
     });
 
     const errorTexts = [
@@ -45,11 +47,18 @@ export function AuthContextProvider() {
     let type = useRef(null);
 
     useEffect(() => {
+        (async () => {
+            const result = await checkToken();
+            if (result.success) history.push('/');
+            setState((prev) => ({ ...prev, autoLogin: false }));
+        })();
+    }, []);
+
+    useEffect(() => {
         if (type.current === 'signUp') {
-            console.log(errors.signUp);
             if (Object.values(errors.signUp).every((value) => value === '')) {
                 setState((prev) => ({ ...prev, loading: true }));
-                fetch('/register', {
+                fetch('/api/auth/register', {
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
@@ -63,14 +72,41 @@ export function AuthContextProvider() {
                     .then(({ success, message }) => {
                         setState((prev) => ({ ...prev, loading: false }));
                         if (!success)
-                            setErrors((prev) => ({
+                            return setErrors((prev) => ({
                                 ...prev,
                                 signUp: { ...prev.signUp, login: message },
                             }));
+
+                        history.push('/');
+                    });
+            }
+        } else if (type.current === 'signIn') {
+            if (errors.signIn.login === '' && errors.signIn.password === '') {
+                setState((prev) => ({ ...prev, loading: true }));
+                fetch('/api/auth/login', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: state.login,
+                        password: state.password,
+                    }),
+                })
+                    .then((res) => res.json())
+                    .then(({ success, message }) => {
+                        setState((prev) => ({ ...prev, loading: false }));
+                        if (!success)
+                            return setErrors((prev) => ({
+                                ...prev,
+                                signIn: { ...prev.signUp, login: message },
+                            }));
+
+                        history.push('/');
                     });
             }
         }
-    }, [errors.signUp]);
+    }, [errors.signUp, errors.signIn]);
 
     function handleClick(e, authType) {
         e.preventDefault();
@@ -142,9 +178,5 @@ export function AuthContextProvider() {
         }
     }
 
-    return (
-        <AuthContext.Provider value={{ handleClick, handleChange, errors, setErrors, state, setState, resetState }}>
-            <Main />
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={{ handleClick, handleChange, errors, setErrors, state, setState, resetState }}>{children}</AuthContext.Provider>;
 }

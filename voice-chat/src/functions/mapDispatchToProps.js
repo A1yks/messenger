@@ -1,6 +1,8 @@
+import getUserData from './getUserData';
+
 function mapDispatchToProps(dispatch) {
     return {
-        hello: (arg) => dispatch({ type: 'HELLO', arg }),
+        getUserData: (id) => dispatch(getUserData(id)),
     };
 }
 
