@@ -36,8 +36,17 @@ router.post('/addFriend', verifyToken, async (req, res) => {
     }
 });
 
-router.get('/search/:username', async (req, res) => {
-    const users = await User.find({ username: new RegExp(req.params.username, 'i') });
+router.get('/search/:username?', verifyToken, async (req, res) => {
+    if (!req.params.username) return res.json({ success: true, users: [] });
+
+    const dbUsers = await User.find({ username: new RegExp(req.params.username, 'i') });
+    const users = dbUsers
+        .filter(({ _id }) => _id.toString() !== req.user.id)
+        .map(({ username, avatar }) => ({
+            username,
+            avatar,
+        }));
+
     res.json({ success: true, users });
 });
 

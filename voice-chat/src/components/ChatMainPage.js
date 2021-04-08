@@ -6,6 +6,7 @@ import { useMainPageContext } from '../context/MainPageContext';
 import LoadingPage from './LoadingPage';
 import { connect } from 'react-redux';
 import { mapDispatchToProps } from '../functions/mapDispatchToProps';
+import Profile from './Profile';
 
 function ChatMainPage({ getUserData }) {
     const { state } = useMainPageContext();
@@ -20,6 +21,7 @@ function ChatMainPage({ getUserData }) {
 
     return (
         <div className={styles.wrapper}>
+            <Profile />
             <LeftMenu />
             <Content />
         </div>

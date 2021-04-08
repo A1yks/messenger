@@ -12,6 +12,13 @@ export function MainPageContextProvider({ children }) {
         userId: '',
     });
 
+    const [profile, setProfile] = useState({
+        visible: false,
+        avatar: '',
+        username: '',
+        isFriend: false,
+    });
+
     useEffect(() => {
         (async () => {
             const { success, userId } = await checkToken();
@@ -20,5 +27,5 @@ export function MainPageContextProvider({ children }) {
         })();
     }, []);
 
-    return <MainPageContext.Provider value={{ state }}>{children}</MainPageContext.Provider>;
+    return <MainPageContext.Provider value={{ state, profile, setProfile }}>{children}</MainPageContext.Provider>;
 }

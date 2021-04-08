@@ -6,6 +6,7 @@
     .avatar {
         width: 5rem;
         height: 5rem;
+        cursor: pointer;
     }
 
     .messageWrapper {
@@ -15,6 +16,7 @@
             .username {
                 font-size: 1.6rem;
                 font-weight: bold;
+                cursor: pointer;
             }
 
             .date {

@@ -18,33 +18,39 @@
         }
     }
 
-    .chatBlock {
-        width: 100%;
-        padding: 1rem 0;
+    .notFound {
+        font-size: 2rem;
+        color: #fff;
+        margin: auto;
+    }
+}
+
+.chatBlock {
+    width: 100%;
+    padding: 1rem 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    text-transform: none;
+
+    &.selected {
+        background: rgba(0, 0, 0, 0.07);
+    }
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.07);
+    }
+
+    .date {
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.15rem;
+    }
+
+    .wrapper {
         display: flex;
+        width: 90%;
+        margin: auto;
         align-items: center;
-        cursor: pointer;
-        text-transform: none;
-
-        &.selected {
-            background: rgba(0, 0, 0, 0.07);
-        }
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.07);
-        }
-
-        .date {
-            color: #fff;
-            font-weight: bold;
-            font-size: 1.15rem;
-        }
-
-        .wrapper {
-            display: flex;
-            width: 90%;
-            margin: auto;
-            align-items: center;
-        }
     }
 }
