@@ -1,4 +1,6 @@
-function setContacts(state = [], action) {
+export const searchResultsInitState = [];
+
+function setContacts(state = searchResultsInitState, action) {
     if (action.type === 'SET_CONTACTS') {
         return action.users;
     }

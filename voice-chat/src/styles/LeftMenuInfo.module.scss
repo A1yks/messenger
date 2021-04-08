@@ -13,13 +13,17 @@
         margin-top: 1.2rem;
         width: 100%;
 
-        .settingsBtn {
-            padding: 1rem;
+        .icons {
+            display: flex;
 
-            svg {
-                width: 2.2rem;
-                height: 2.2rem;
-                color: #fff;
+            .icon {
+                padding: 1rem;
+
+                svg {
+                    width: 2.2rem;
+                    height: 2.2rem;
+                    color: #fff;
+                }
             }
         }
     }
@@ -65,6 +69,15 @@
         width: 100%;
         max-height: 20rem;
         overflow-y: overlay;
-        margin-top: 1.8rem;
+    }
+}
+
+.logout {
+    &Title h2 {
+        font-size: 1.8rem;
+    }
+
+    &Btn span {
+        font-size: 1.4rem;
     }
 }

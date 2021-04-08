@@ -2,16 +2,28 @@ const router = require('express').Router();
 const User = require('../models/User');
 const { verifyToken } = require('../functions/tokens');
 
-router.get('/getUser/:userId', async (req, res) => {
+router.get('/getUser/:userId', verifyToken, async (req, res) => {
     const user = await User.findById(req.params.userId);
 
     if (user === null) return res.status(404).json({ success: false, message: 'Пользователь не найден' });
 
-    const userData = {
-        id: user._id,
-        avatar: user.avatar,
-        username: user.username,
-    };
+    let userData = {};
+
+    if (req.user.id === req.params.userId)
+        userData = {
+            id: user._id,
+            avatar: user.avatar,
+            username: user.username,
+            sentFriendRequests: user.sentFriendRequests,
+            receivedFriendRequests: user.receivedFriendRequests,
+            contacts: user.contacts,
+        };
+    else
+        userData = {
+            id: user._id,
+            avatar: user.avatar,
+            username: user.username,
+        };
     res.json({ success: true, userData });
 });
 
@@ -25,8 +37,11 @@ router.post('/addFriend', verifyToken, async (req, res) => {
 
     if (friend === null) return res.status(404).json({ success: false, message: 'Пользователь 2 не найден' });
 
-    user.sentFriendRequests.push(friendId);
-    friend.receiverFriendRequests.push(userId);
+    if (user.sentFriendRequests.includes(friendId)) return res.status(406).json({ success: false, message: 'Запрос на добавления в друзья уже отправлен' });
+    else user.sentFriendRequests.push(friendId);
+
+    if (friend.receivedFriendRequests.includes(userId)) return res.status(406).json({ success: false, message: 'Запрос на добавления в друзья уже получен' });
+    else friend.receivedFriendRequests.push(userId);
 
     try {
         await Promise.all([user.save(), friend.save()]);
@@ -36,15 +51,81 @@ router.post('/addFriend', verifyToken, async (req, res) => {
     }
 });
 
+router.post('/cancelFriendRequest', verifyToken, async (req, res) => {
+    const { userId, friendId } = req.body;
+    const user = await User.findById(userId);
+
+    if (user === null) return res.status(404).json({ success: false, message: 'Пользователь 1 не найден' });
+
+    const friend = await User.findById(friendId);
+
+    if (friend === null) return res.status(404).json({ success: false, message: 'Пользователь 2 не найден' });
+
+    user.sentFriendRequests = user.sentFriendRequests.filter((id) => id !== friendId);
+    friend.receivedFriendRequests = friend.receivedFriendRequests.filter((id) => id !== userId);
+
+    try {
+        await Promise.all([user.save(), friend.save()]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Возникла ошибка при попытке отправить запрос на добавление в друзья' });
+    }
+});
+
+router.post('/acceptFriend', verifyToken, async (req, res) => {
+    const { userId, friendId } = req.body;
+    const user = await User.findById(userId);
+
+    if (user === null) return res.status(404).json({ success: false, message: 'Пользователь 1 не найден' });
+
+    const friend = await User.findById(friendId);
+
+    if (friend === null) return res.status(404).json({ success: false, message: 'Пользователь 2 не найден' });
+
+    user.receivedFriendRequests = user.receivedFriendRequests.filter((id) => id !== friendId);
+    friend.sentFriendRequests = friend.sentFriendRequests.filter((id) => id !== userId);
+    user.contacts.push(friendId);
+    friend.contacts.push(userId);
+
+    try {
+        await Promise.all([user.save(), friend.save()]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Возникла ошибка при попытке принять запрос в друзья' });
+    }
+});
+
+router.post('/removeFriend', verifyToken, async (req, res) => {
+    const { userId, friendId } = req.body;
+    const user = await User.findById(userId);
+
+    if (user === null) return res.status(404).json({ success: false, message: 'Пользователь 1 не найден' });
+
+    const friend = await User.findById(friendId);
+
+    if (friend === null) return res.status(404).json({ success: false, message: 'Пользователь 2 не найден' });
+
+    user.contacts = user.contacts.filter((id) => id !== friendId);
+    friend.contacts = friend.contacts.filter((id) => id !== userId);
+
+    try {
+        await Promise.all([user.save(), friend.save()]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Возникла ошибка при попытке принять запрос в друзья' });
+    }
+});
+
 router.get('/search/:username?', verifyToken, async (req, res) => {
     if (!req.params.username) return res.json({ success: true, users: [] });
 
     const dbUsers = await User.find({ username: new RegExp(req.params.username, 'i') });
     const users = dbUsers
         .filter(({ _id }) => _id.toString() !== req.user.id)
-        .map(({ username, avatar }) => ({
+        .map(({ username, avatar, _id }) => ({
             username,
             avatar,
+            id: _id,
         }));
 
     res.json({ success: true, users });

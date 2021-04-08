@@ -10,8 +10,8 @@ function Contacts({ showDate, contacts }) {
 
     if (contacts.length === 0 && showDate) return <span className={styles.notFound}>Контакты не найдены</span>;
 
-    return contacts.map(({ username, avatar, date }) => (
-        <Button className={styles.chatBlock} onClick={showDate ? () => {} : () => setProfile({ visible: true, avatar, username })}>
+    return contacts.map(({ username, avatar, id, date }, i) => (
+        <Button key={i} className={styles.chatBlock} onClick={showDate ? () => {} : () => setProfile({ visible: true, avatar, username, id })}>
             <div className={ex(styles.wrapper)}>
                 <Account username={username} src={avatar} />
                 {showDate ? <span className={styles.date}>{date}</span> : ''}

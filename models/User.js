@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const userSchema = new mongoose.Schema(
     {
@@ -19,9 +18,9 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: '',
         },
-        sentFriendRequests: [ObjectId],
-        receivedFriendRequests: [ObjectId],
-        contacts: [ObjectId],
+        sentFriendRequests: [String],
+        receivedFriendRequests: [String],
+        contacts: [String],
     },
     { collection: 'users' }
 );

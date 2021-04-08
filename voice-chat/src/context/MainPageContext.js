@@ -16,6 +16,8 @@ export function MainPageContextProvider({ children }) {
         visible: false,
         avatar: '',
         username: '',
+        id: '',
+        requestSent: false,
         isFriend: false,
     });
 

@@ -11,13 +11,17 @@
     .wrapper {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         border-radius: 0.5rem;
         background: #677bc4;
         padding: 2rem 3rem;
         position: relative;
         z-index: 1200;
+        width: 60rem;
 
         .account {
+            width: 45%;
+
             span {
                 font-size: 2.5rem;
             }
@@ -32,7 +36,7 @@
             color: #fff;
             font-size: 1.4rem;
             height: 50%;
-            width: 30rem;
+            width: 45%;
         }
 
         .addFriend {
@@ -48,6 +52,14 @@
 
             &:hover {
                 background: #b90041;
+            }
+        }
+
+        .cancelRequest {
+            background: #eb7600;
+
+            &:hover {
+                background: #d36a01;
             }
         }
     }

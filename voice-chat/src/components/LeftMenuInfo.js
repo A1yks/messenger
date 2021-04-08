@@ -3,14 +3,22 @@ import IconButton from '@material-ui/core/IconButton';
 import Settings from '@material-ui/icons/Settings';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Account from './Account';
 import Contacts from './Contacts';
 import styles from '../styles/LeftMenuInfo.module.scss';
 import { connect } from 'react-redux';
 import { mapDispatchToProps } from '../functions/mapDispatchToProps';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import cx from 'classnames';
 
-function LeftMenuInfo({ username, avatar, searchUsers, contacts }) {
+function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [open, setOpen] = useState(false);
 
     function search(e) {
         setSearchQuery(() => {
@@ -19,13 +27,29 @@ function LeftMenuInfo({ username, avatar, searchUsers, contacts }) {
         });
     }
 
+    function handleOpen() {
+        setOpen(true);
+    }
+
+    function handleClose() {
+        setOpen(false);
+    }
+
     return (
         <div className={styles.main}>
             <div className={styles.account}>
                 <Account username={username} src={avatar} />
-                <IconButton className={styles.settingsBtn}>
-                    <Settings />
-                </IconButton>
+                <div className={styles.icons}>
+                    <IconButton onClick={handleOpen} className={cx(styles.icon, styles.exitBtn)}>
+                        <ExitToAppIcon />
+                    </IconButton>
+                    <IconButton className={cx(styles.icon, styles.notificationsBtn)}>
+                        <NotificationsIcon />
+                    </IconButton>
+                    <IconButton className={cx(styles.icon, styles.settingsBtn)}>
+                        <Settings />
+                    </IconButton>
+                </div>
             </div>
             <div className={styles.search}>
                 <div className={styles.searchIcon}>
@@ -41,9 +65,28 @@ function LeftMenuInfo({ username, avatar, searchUsers, contacts }) {
                     onChange={search}
                 />
             </div>
-            <div className={styles.contacts}>
-                <Contacts contacts={contacts} />
+            <div className={styles.contacts} style={{ marginTop: searchResults.length === 0 ? '0' : '1.8rem' }}>
+                <Contacts contacts={searchResults} />
             </div>
+            <Dialog className={styles.logout} open={open} onClose={handleClose}>
+                <DialogTitle className={styles.logoutTitle}>Вы уверены, что хотите выйти?</DialogTitle>
+                <DialogActions>
+                    <Button className={styles.logoutBtn} onClick={handleClose} color="primary">
+                        Нет
+                    </Button>
+                    <Button
+                        className={styles.logoutBtn}
+                        onClick={() => {
+                            handleClose();
+                            logout();
+                        }}
+                        color="primary"
+                        autoFocus
+                    >
+                        Да
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
@@ -52,7 +95,7 @@ export default connect(
     (state) => ({
         username: state.userData.username,
         avatar: state.userData.avatar,
-        contacts: state.contacts,
+        searchResults: state.searchResults,
     }),
     mapDispatchToProps
 )(LeftMenuInfo);
