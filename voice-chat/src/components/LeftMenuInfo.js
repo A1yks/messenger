@@ -40,13 +40,13 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
             <div className={styles.account}>
                 <Account username={username} src={avatar} />
                 <div className={styles.icons}>
-                    <IconButton onClick={handleOpen} className={cx(styles.icon, styles.exitBtn)}>
+                    <IconButton onClick={handleOpen} className={cx(styles.icon, styles.exitBtn)} title="Выход">
                         <ExitToAppIcon />
                     </IconButton>
-                    <IconButton className={cx(styles.icon, styles.notificationsBtn)}>
+                    <IconButton className={cx(styles.icon, styles.notificationsBtn)} title="Уведомления">
                         <NotificationsIcon />
                     </IconButton>
-                    <IconButton className={cx(styles.icon, styles.settingsBtn)}>
+                    <IconButton className={cx(styles.icon, styles.settingsBtn)} title="Настройки">
                         <Settings />
                     </IconButton>
                 </div>

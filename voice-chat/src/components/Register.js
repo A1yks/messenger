@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import styles from '../styles/Auth.module.scss';
 import { useAuthContext } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 function Register() {
     const { handleClick, handleChange, errors, state, resetState } = useAuthContext();
@@ -56,6 +57,11 @@ function Register() {
             >
                 {state.loading ? <CircularProgress classes={{ colorPrimary: styles.colorPrimary }} size="2.4rem" /> : 'Создать аккаунт'}
             </Button>
+            <div className={styles.register}>
+                <p>
+                    <Link to="/auth/login">Назад</Link>
+                </p>
+            </div>
         </>
     );
 }

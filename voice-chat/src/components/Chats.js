@@ -4,24 +4,30 @@ import styles from '../styles/Chats.module.scss';
 import { connect } from 'react-redux';
 import { CircularProgress } from '@material-ui/core';
 
-function Chats({ contacts }) {
+function Chats({ contacts, userId }) {
     const [friends, setFriends] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const arr = [];
-        contacts.forEach((id) =>
-            arr.push(
-                fetch(`/api/chat/getUser/${id}`)
-                    .then((res) => res.json())
-                    .then((json) => json.userData)
-            )
-        );
-        Promise.all(arr).then((users) => setFriends(users));
-    }, [contacts]);
+        if (userId !== '') {
+            const arr = [];
+            contacts.forEach((id) =>
+                arr.push(
+                    fetch(`/api/chat/getUser/${id}`)
+                        .then((res) => res.json())
+                        .then((json) => json.userData)
+                )
+            );
+            Promise.all(arr).then((users) => {
+                setFriends(users);
+                setLoading(false);
+            });
+        }
+    }, [userId, contacts]);
 
     return (
         <div className={styles.main}>
-            {contacts.length !== 0 && friends.length === 0 ? (
+            {loading ? (
                 <CircularProgress className={styles.loading} />
             ) : (
                 <>
@@ -38,6 +44,7 @@ function Chats({ contacts }) {
 export default connect(
     (state) => ({
         contacts: state.userData.contacts,
+        userId: state.userData.id,
     }),
     null
 )(Chats);
