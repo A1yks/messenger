@@ -2,16 +2,17 @@ import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import styles from '../styles/Message.module.scss';
 import { useMainPageContext } from '../context/MainPageContext';
+import ex from 'classnames';
 
-function Message({ avatar, username, date, children }) {
+function Message({ avatar, username, date, isUser, children }) {
     const { setProfile } = useMainPageContext();
 
     function handleClick() {
-        setProfile({ visible: true, avatar, username });
+        setProfile((prev) => ({ ...prev, visible: true, avatar, username }));
     }
 
     return (
-        <div className={styles.main}>
+        <div className={ex(styles.main, { [styles.user]: isUser })}>
             <Avatar alt="user" src={avatar} className={styles.avatar} onClick={handleClick} />
             <div className={styles.messageWrapper}>
                 <div className={styles.usernameWrapper}>

@@ -3,10 +3,31 @@
     flex-direction: column;
     margin: 0 auto;
     width: 100%;
-    overflow-y: overlay;
+    flex-grow: 1;
+    overflow-y: hidden;
 
-    .messages {
-        width: 60%;
-        margin: 0 auto;
+    .messagesWrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-grow: 1;
+        overflow-y: overlay;
+
+        .messages {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+
+            .chatLoading {
+                margin: auto;
+            }
+        }
+    }
+
+    .emptyHistory {
+        font-size: 2.6rem;
+        margin: auto;
     }
 }

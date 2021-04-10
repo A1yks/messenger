@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Conversation = require('../models/Conversation');
 const { verifyToken } = require('../functions/tokens');
 const checkFriends = require('../functions/checkFriends');
+const createChat = require('../functions/createChat');
 
 router.get('/getUser/:userId', verifyToken, async (req, res) => {
     const user = await User.findById(req.params.userId);
@@ -87,12 +88,13 @@ router.post('/acceptFriend', verifyToken, async (req, res) => {
 
     user.receivedFriendRequests = user.receivedFriendRequests.filter((id) => id !== friendId);
     friend.sentFriendRequests = friend.sentFriendRequests.filter((id) => id !== userId);
-    user.contacts.push(friendId);
-    friend.contacts.push(userId);
+    const chat = await createChat(friendId, userId);
+    user.contacts.push({ friendId, chatId: chat._id });
+    friend.contacts.push({ friendId: userId, chatId: chat._id });
 
     try {
         await Promise.all([user.save(), friend.save()]);
-        res.json({ success: true });
+        res.json({ success: true, chatId: chat._id });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Возникла ошибка при попытке принять запрос в друзья' });
     }
@@ -108,8 +110,8 @@ router.post('/removeFriend', verifyToken, async (req, res) => {
 
     if (friend === null) return res.status(404).json({ success: false, message: 'Пользователь 2 не найден' });
 
-    user.contacts = user.contacts.filter((id) => id !== friendId);
-    friend.contacts = friend.contacts.filter((id) => id !== userId);
+    user.contacts = user.contacts.filter(({ friendId: id }) => id !== friendId);
+    friend.contacts = friend.contacts.filter(({ friendId: id }) => id !== userId);
 
     try {
         await Promise.all([user.save(), friend.save()]);
@@ -122,7 +124,7 @@ router.post('/removeFriend', verifyToken, async (req, res) => {
 router.get('/search/:username?', verifyToken, async (req, res) => {
     if (!req.params.username) return res.json({ success: true, users: [] });
 
-    const dbUsers = await User.find({ username: new RegExp(`^${req.params.username}`, 'i') });
+    const dbUsers = await User.find({ username: new RegExp(`^${req.params.username}`, 'i') }).limit(30);
     const users = dbUsers
         .filter(({ _id }) => _id.toString() !== req.user.id)
         .map(({ username, avatar, _id }) => ({
@@ -136,30 +138,33 @@ router.get('/search/:username?', verifyToken, async (req, res) => {
 
 router.post('/access', verifyToken, async (req, res) => {
     const { userId, friendId, skipNumber } = req.body;
-    const friends = await checkFriends(userId, friendId);
+    const friends = req.user.id === userId && (await checkFriends(userId, friendId));
 
-    if (!friends) return res.json({ success: false, message: 'Возникла ошибка при попытке получить доступ к беседе' });
+    if (!friends) return res.status(403).json({ success: false, message: 'Возникла ошибка при попытке получить доступ к беседе' });
 
     const chat = await Conversation.findOne({ members: { $all: [userId, friendId] } }, { messages: { $slice: [skipNumber, 30] } });
 
-    if (chat !== null) {
-        res.json({
-            success: true,
-            chat,
-        });
-    } else {
-        const chat = new Conversation({
-            members: [userId, friendId],
-            date: new Date(),
-        });
+    if (chat === null) return res.status(404).json({ succes: false, message: 'Чат не найден' });
 
-        try {
-            await chat.save();
-            res.json({ success: true, chat });
-        } catch (err) {
-            res.json({ success: false, message: 'Возникла ошибка при попытке создать беседу' });
-        }
-    }
+    res.json({ success: true, chat: chat.toClient() });
+    // if (chat !== null) {
+    //     res.json({
+    //         success: true,
+    //         chat: chat.toClient(),
+    //     });
+    // } else {
+    //     const chat = new Conversation({
+    //         members: [userId, friendId],
+    //         date: new Date(),
+    //     });
+
+    //     try {
+    //         await chat.save();
+    //         res.json({ success: true, chat: chat.toClient() });
+    //     } catch (err) {
+    //         res.json({ success: false, message: 'Возникла ошибка при попытке создать беседу' });
+    //     }
+    // }
 });
 
 module.exports = router;

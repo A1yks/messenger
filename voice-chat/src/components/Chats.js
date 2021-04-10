@@ -3,21 +3,24 @@ import Contacts from './Contacts';
 import styles from '../styles/Chats.module.scss';
 import { connect } from 'react-redux';
 import { CircularProgress } from '@material-ui/core';
+import { useMainPageContext } from '../context/MainPageContext';
 
 function Chats({ contacts, userId }) {
     const [friends, setFriends] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { joinChat } = useMainPageContext();
 
     useEffect(() => {
         if (userId !== '') {
             const arr = [];
-            contacts.forEach((id) =>
+            contacts.forEach(({ friendId, chatId }) => {
+                joinChat(chatId);
                 arr.push(
-                    fetch(`/api/chat/getUser/${id}`)
+                    fetch(`/api/chat/getUser/${friendId}`)
                         .then((res) => res.json())
                         .then((json) => json.userData)
-                )
-            );
+                );
+            });
             Promise.all(arr).then((users) => {
                 setFriends(users);
                 setLoading(false);

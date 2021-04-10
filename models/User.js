@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const contactSchema = new mongoose.Schema({ friendId: String, chatId: String }, { _id: false });
+
 const userSchema = new mongoose.Schema(
     {
         username: {
@@ -20,7 +22,7 @@ const userSchema = new mongoose.Schema(
         },
         sentFriendRequests: [String],
         receivedFriendRequests: [String],
-        contacts: [String],
+        contacts: [contactSchema],
     },
     { collection: 'users' }
 );

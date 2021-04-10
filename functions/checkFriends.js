@@ -9,7 +9,7 @@ async function checkFriends(userId, friendId) {
 
     if (friend === null) return { success: false, message: 'Пользователь 2 не найден' };
 
-    return user.contacts.includes(friendId) && friend.contacts.includes(userId);
+    return user.contacts.find(({ friendId: id }) => id === friendId) !== undefined && !!user.contacts.find(({ friendId: id }) => id === userId) !== undefined;
 }
 
 module.exports = checkFriends;

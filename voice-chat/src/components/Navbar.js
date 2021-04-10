@@ -7,10 +7,20 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import CloseIcon from '@material-ui/icons/Close';
 import PersonIcon from '@material-ui/icons/Person';
 import styles from '../styles/Navbar.module.scss';
+import { connect } from 'react-redux';
+import { mapDispatchToProps } from '../functions/mapDispatchToProps';
+import { useMainPageContext } from '../context/MainPageContext';
 
-function Navbar({ chatName }) {
+function Navbar({ chatName, closeChat }) {
+    const { setProfile } = useMainPageContext();
+
+    function handleClose() {
+        setProfile({ visible: false, avatar: '', username: '', id: '', chatId: '', requestSent: false, isFriend: false });
+        closeChat();
+    }
+
     return (
-        <AppBar className={styles.appBar} position="sticky">
+        <AppBar className={styles.appBar} position="static">
             <Toolbar className={styles.toolbar}>
                 <div className={styles.chatName}>
                     <PersonIcon />
@@ -22,7 +32,7 @@ function Navbar({ chatName }) {
                     <IconButton edge="end" color="inherit" title="Позвонить">
                         <PhoneIcon />
                     </IconButton>
-                    <IconButton edge="end" color="inherit" title="Закрыть чат">
+                    <IconButton edge="end" color="inherit" title="Закрыть чат" onClick={handleClose}>
                         <CloseIcon />
                     </IconButton>
                 </div>
@@ -31,4 +41,4 @@ function Navbar({ chatName }) {
     );
 }
 
-export default Navbar;
+export default connect(null, mapDispatchToProps)(Navbar);

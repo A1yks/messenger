@@ -1,36 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Account from './Account';
 import Button from '@material-ui/core/Button';
 import styles from '../styles/Chats.module.scss';
 import { useMainPageContext } from '../context/MainPageContext';
 import { connect } from 'react-redux';
 import ex from 'classnames';
+import { mapDispatchToProps } from '../functions/mapDispatchToProps';
 
-function Contacts({ showDate, contacts, userId }) {
-    const { setProfile } = useMainPageContext();
+function Contacts({ showDate, contacts, user, selectChat }) {
+    const [selectedBtn, setSelectedBtn] = useState(-1);
+    const { profile, setProfile } = useMainPageContext();
 
-    async function accessChat(friendId) {
-        const request = await fetch('/api/chat/access', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId,
-                friendId,
-                skipNumber: 0,
-            }),
-        });
-        const { success, chat } = await request.json();
+    useEffect(() => {
+        if (showDate && profile.chatId !== '') selectChat({ friend: profile, id: profile.chatId });
+    }, [profile.chatId, showDate]);
 
-        if (success) console.log(chat);
-    }
+    // async function accessChat() {
+    //     // openChat(profile);
+    //     // const request = await fetch('/api/chat/access', {
+    //     //     method: 'post',
+    //     //     headers: {
+    //     //         'Content-Type': 'application/json',
+    //     //     },
+    //     //     body: JSON.stringify({
+    //     //         userId: user.id,
+    //     //         friendId: profile.id,
+    //     //         skipNumber: 0,
+    //     //     }),
+    //     // });
+    //     // const { success, chat } = await request.json();
+    // }
 
     if (contacts.length === 0 && showDate) return <span className={styles.notFound}>Контакты не найдены</span>;
 
     return contacts.map(({ username, avatar, id, date }, i) => (
-        <Button key={i} className={styles.chatBlock} onClick={showDate ? () => accessChat(id) : () => setProfile({ visible: true, avatar, username, id })}>
-            <div className={ex(styles.wrapper)}>
+        <Button
+            key={i}
+            className={ex(styles.chatBlock, { [styles.selected]: i === selectedBtn })}
+            onClick={() => {
+                setProfile({ visible: !showDate, avatar, username, id, chatId: !showDate || user.contacts.length === 0 ? '' : user.contacts[i].chatId });
+                setSelectedBtn(i);
+            }}
+        >
+            <div className={styles.wrapper}>
                 <Account username={username} src={avatar} />
                 {showDate ? <span className={styles.date}>{date}</span> : ''}
             </div>
@@ -40,7 +52,7 @@ function Contacts({ showDate, contacts, userId }) {
 
 export default connect(
     (state) => ({
-        userId: state.userData.id,
+        user: state.userData,
     }),
-    null
+    mapDispatchToProps
 )(Contacts);

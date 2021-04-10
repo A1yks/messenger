@@ -11,7 +11,7 @@ const schema = joi.object({
 });
 
 router.get('/verify-token', verifyToken, (req, res) => {
-    res.json({ success: true, userId: req.user.id });
+    res.json({ success: true, userId: req.user.id, username: req.user.username });
 });
 
 router.post('/register', async (req, res) => {
@@ -37,7 +37,7 @@ router.post('/register', async (req, res) => {
 
     try {
         await user.save();
-        const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
+        const token = jwt.sign({ id: user._id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
         res.cookie('authToken', token, { maxAge: 600000 });
         res.json({ success: true });
     } catch (err) {
@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
             message: 'Неверный логин или пароль',
         });
 
-    const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
     res.cookie('authToken', token, { maxAge: 600000 });
     res.json({ success: true });
 });

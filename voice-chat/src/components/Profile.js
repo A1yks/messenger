@@ -59,9 +59,9 @@ function Profile({ userId, addFriendRequest, sentFriendRequests, receivedFriendR
                 friendId: profile.id,
             }),
         });
-        const { success } = await request.json();
+        const { success, chatId } = await request.json();
 
-        if (success) addContact(profile.id);
+        if (success) addContact({ friendId: profile.id, chatId });
     }
 
     async function removeFriend() {
@@ -85,7 +85,7 @@ function Profile({ userId, addFriendRequest, sentFriendRequests, receivedFriendR
     let btnText = '';
     let handleClick = null;
 
-    if (contacts.includes(profile.id)) {
+    if (contacts.find(({ friendId }) => friendId === profile.id)) {
         btnText = 'Удалить из друзей';
         handleClick = removeFriend;
     } else if (sentFriendRequests.includes(profile.id)) {
@@ -106,9 +106,9 @@ function Profile({ userId, addFriendRequest, sentFriendRequests, receivedFriendR
                 <Button
                     onClick={handleClick}
                     className={cx(
-                        { [styles.removeFriend]: contacts.includes(profile.id) },
+                        { [styles.removeFriend]: contacts.find(({ friendId }) => friendId === profile.id) },
                         { [styles.cancelRequest]: sentFriendRequests.includes(profile.id) },
-                        { [styles.addFriend]: !contacts.includes(profile.id) },
+                        { [styles.addFriend]: !contacts.find(({ friendId }) => friendId === profile.id) },
                         styles.btn
                     )}
                 >

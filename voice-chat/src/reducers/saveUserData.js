@@ -21,11 +21,17 @@ function saveUserData(state = userDataInitState, action) {
     }
 
     if (action.type === 'ADD_CONTACT') {
-        return { ...state, sentFriendRequests: state.sentFriendRequests.filter((id) => id !== action.friendId), contacts: [...state.contacts, action.friendId] };
+        console.log(action.contact);
+        return {
+            ...state,
+            sentFriendRequests: state.sentFriendRequests.filter((id) => id !== action.contact.friendId),
+            contacts: [...state.contacts, { ...action.contact }],
+            receivedFriendRequests: state.receivedFriendRequests.filter((id) => id !== action.contact.friendId),
+        };
     }
 
     if (action.type === 'REMOVE_CONTACT') {
-        return { ...state, contacts: state.contacts.filter((id) => id !== action.friendId) };
+        return { ...state, contacts: state.contacts.filter(({ friendId: id }) => id !== action.friendId) };
     }
 
     return state;

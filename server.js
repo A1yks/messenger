@@ -1,14 +1,18 @@
+const http = require('http');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
+const socketio = require('socket.io');
+const sockets = require('./sockets/sockets');
 require('dotenv').config();
 
 const app = express();
+const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -26,4 +30,14 @@ mongoose.connect(
     (err) => (err ? console.error(err) : console.log('Connected'))
 );
 
-app.listen(process.env.PORT || 3001);
+server.listen(process.env.PORT || 3001);
+
+const io = socketio(server, {
+    cors: {
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
+});
+
+sockets(io);
