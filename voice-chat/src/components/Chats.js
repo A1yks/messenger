@@ -18,7 +18,7 @@ function Chats({ contacts, userId }) {
                 arr.push(
                     fetch(`/api/chat/getUser/${friendId}`)
                         .then((res) => res.json())
-                        .then((json) => json.userData)
+                        .then((json) => ({ ...json.userData, chatId }))
                 );
             });
             Promise.all(arr).then((users) => {

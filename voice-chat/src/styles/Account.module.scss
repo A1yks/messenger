@@ -3,9 +3,25 @@
     align-items: center;
     width: 100%;
 
-    .username {
+    .info {
+        display: flex;
+        flex-direction: column;
         margin-left: 1.5rem;
-        font-size: 1.4rem;
-        color: #fff;
+        text-align: left;
+        flex-grow: 1;
+        justify-content: center;
+        overflow: hidden;
+
+        .username {
+            font-size: 1.4rem;
+            color: #fff;
+        }
+
+        .messagePart {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #ccc;
+        }
     }
 }

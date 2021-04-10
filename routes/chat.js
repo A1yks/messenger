@@ -20,6 +20,7 @@ router.get('/getUser/:userId', verifyToken, async (req, res) => {
             sentFriendRequests: user.sentFriendRequests,
             receivedFriendRequests: user.receivedFriendRequests,
             contacts: user.contacts,
+            notifications: user.notifications,
         };
     else
         userData = {

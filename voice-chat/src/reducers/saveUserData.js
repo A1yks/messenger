@@ -5,11 +5,17 @@ export const userDataInitState = {
     sentFriendRequests: [],
     receivedFriendRequests: [],
     contacts: [],
+    messageNotifications: [],
+    friendNotifications: [],
 };
 
 function saveUserData(state = userDataInitState, action) {
     if (action.type === 'SAVE_USER_DATA') {
-        return action.userData;
+        const userData = { ...action.userData };
+        userData.messageNotifications = userData.notifications.filter(({ type }) => type === 'NEW_MESSAGE');
+        userData.friendNotifications = userData.notifications.filter(({ type }) => type === 'FRIEND_REQUEST');
+        delete userData.notifications;
+        return userData;
     }
 
     if (action.type === 'ADD_FRIEND_REQUEST') {

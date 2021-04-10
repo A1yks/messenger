@@ -24,7 +24,7 @@ export function MainPageContextProvider({ children }) {
         isFriend: false,
     });
 
-    const { joinChat, sendMessage, messages, setLoading: setChatLoading, loading: chatLoading } = useChat(state.username, state.userId);
+    const { joinChat, sendMessage, messages, unreadMessages, readMessages, setLoading: setChatLoading, loading: chatLoading } = useChat(state.username, state.userId);
 
     useEffect(() => {
         (async () => {
@@ -34,5 +34,9 @@ export function MainPageContextProvider({ children }) {
         })();
     }, []);
 
-    return <MainPageContext.Provider value={{ state, profile, setProfile, joinChat, sendMessage, messages, setChatLoading, chatLoading }}>{children}</MainPageContext.Provider>;
+    return (
+        <MainPageContext.Provider value={{ state, profile, setProfile, joinChat, sendMessage, messages, unreadMessages, readMessages, setChatLoading, chatLoading }}>
+            {children}
+        </MainPageContext.Provider>
+    );
 }

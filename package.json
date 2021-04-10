@@ -19,7 +19,6 @@
     "express": "^4.17.1",
     "history": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.29.1",
     "mongoose": "^5.12.1",
     "socket.io": "^4.0.1",
     "type-is": "^1.6.18"

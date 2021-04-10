@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const contactSchema = new mongoose.Schema({ friendId: String, chatId: String }, { _id: false });
 
+const notificationSchema = new mongoose.Schema({ type: String, data: Object }, { _id: false });
+
 const userSchema = new mongoose.Schema(
     {
         username: {
@@ -23,6 +25,7 @@ const userSchema = new mongoose.Schema(
         sentFriendRequests: [String],
         receivedFriendRequests: [String],
         contacts: [contactSchema],
+        notifications: [notificationSchema],
     },
     { collection: 'users' }
 );

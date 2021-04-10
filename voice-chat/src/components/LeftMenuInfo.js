@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Settings from '@material-ui/icons/Settings';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
@@ -44,7 +45,9 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
                         <ExitToAppIcon />
                     </IconButton>
                     <IconButton className={cx(styles.icon, styles.notificationsBtn)} title="Уведомления">
-                        <NotificationsIcon />
+                        <Badge className={styles.notificationsCount} badgeContent={4} max={999} color="secondary">
+                            <NotificationsIcon />
+                        </Badge>
                     </IconButton>
                     <IconButton className={cx(styles.icon, styles.settingsBtn)} title="Настройки">
                         <Settings />
