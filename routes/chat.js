@@ -33,7 +33,8 @@ router.get('/getUser/:userId', verifyToken, async (req, res) => {
 });
 
 router.post('/addFriend', verifyToken, async (req, res) => {
-    const { userId, friendId } = req.body;
+    const { friendId } = req.body;
+    const userId = req.user.id;
     const user = await User.findById(userId);
 
     if (user === null) return res.status(404).json({ success: false, message: 'Пользователь 1 не найден' });
@@ -41,6 +42,8 @@ router.post('/addFriend', verifyToken, async (req, res) => {
     const friend = await User.findById(friendId);
 
     if (friend === null) return res.status(404).json({ success: false, message: 'Пользователь 2 не найден' });
+
+    if (await checkFriends(user, friend)) return res.status(500).json({ success: false, message: 'Возникла ошибка при попытке отправить запрос на добавление в друзья' });
 
     if (user.sentFriendRequests.includes(friendId)) return res.status(406).json({ success: false, message: 'Запрос на добавления в друзья уже отправлен' });
     else user.sentFriendRequests.push(friendId);
@@ -57,7 +60,8 @@ router.post('/addFriend', verifyToken, async (req, res) => {
 });
 
 router.post('/cancelFriendRequest', verifyToken, async (req, res) => {
-    const { userId, friendId } = req.body;
+    const { friendId } = req.body;
+    const userId = req.user.id;
     const user = await User.findById(userId);
 
     if (user === null) return res.status(404).json({ success: false, message: 'Пользователь 1 не найден' });
@@ -78,7 +82,8 @@ router.post('/cancelFriendRequest', verifyToken, async (req, res) => {
 });
 
 router.post('/acceptFriend', verifyToken, async (req, res) => {
-    const { userId, friendId } = req.body;
+    const { friendId } = req.body;
+    const userId = req.user.id;
     const user = await User.findById(userId);
 
     if (user === null) return res.status(404).json({ success: false, message: 'Пользователь 1 не найден' });
@@ -102,7 +107,8 @@ router.post('/acceptFriend', verifyToken, async (req, res) => {
 });
 
 router.post('/removeFriend', verifyToken, async (req, res) => {
-    const { userId, friendId } = req.body;
+    const { friendId } = req.body;
+    const userId = req.user.id;
     const user = await User.findById(userId);
 
     if (user === null) return res.status(404).json({ success: false, message: 'Пользователь 1 не найден' });
@@ -138,8 +144,8 @@ router.get('/search/:username?', verifyToken, async (req, res) => {
 });
 
 router.post('/access', verifyToken, async (req, res) => {
-    const { userId, friendId, skipNumber } = req.body;
-    const friends = req.user.id === userId && (await checkFriends(userId, friendId));
+    const { friendId, skipNumber } = req.body;
+    const friends = await checkFriends(userId, friendId);
 
     if (!friends) return res.status(403).json({ success: false, message: 'Возникла ошибка при попытке получить доступ к беседе' });
 

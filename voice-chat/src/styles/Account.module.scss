@@ -1,7 +1,8 @@
 .avatarWrapper {
     display: flex;
     align-items: center;
-    width: 100%;
+    flex-grow: 1;
+    overflow: hidden;
 
     .info {
         display: flex;
@@ -15,6 +16,9 @@
         .username {
             font-size: 1.4rem;
             color: #fff;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         .messagePart {

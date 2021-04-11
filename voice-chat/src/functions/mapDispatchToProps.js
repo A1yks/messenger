@@ -13,6 +13,7 @@ function mapDispatchToProps(dispatch) {
         openChat: (friend) => dispatch({ type: 'OPEN_CHAT', friend }),
         selectChat: (selectedChat) => dispatch({ type: 'SELECT_CHAT', selectedChat }),
         closeChat: () => dispatch({ type: 'CLOSE_CHAT' }),
+        saveFriendRequests: (users) => dispatch({ type: 'NEW_FRIEND_REQUEST', users }),
     };
 }
 

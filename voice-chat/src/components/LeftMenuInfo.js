@@ -15,11 +15,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import { useMainPageContext } from '../context/MainPageContext';
 import cx from 'classnames';
+import Notifications from './Notifications';
 
 function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [notificationsVisible, setNotificationsVisible] = useState(false);
     const [open, setOpen] = useState(false);
+    const { friendRequests } = useMainPageContext();
 
     function search(e) {
         setSearchQuery(() => {
@@ -36,6 +40,10 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
         setOpen(false);
     }
 
+    function toggleNotifications() {
+        setNotificationsVisible((prev) => !prev);
+    }
+
     return (
         <div className={styles.main}>
             <div className={styles.account}>
@@ -44,14 +52,16 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
                     <IconButton onClick={handleOpen} className={cx(styles.icon, styles.exitBtn)} title="Выход">
                         <ExitToAppIcon />
                     </IconButton>
-                    <IconButton className={cx(styles.icon, styles.notificationsBtn)} title="Уведомления">
-                        <Badge className={styles.notificationsCount} badgeContent={4} max={999} color="secondary">
+                    <IconButton className={cx(styles.icon, styles.notificationsBtn)} title="Уведомления" onClick={toggleNotifications}>
+                        <Badge className={styles.notificationsCount} badgeContent={friendRequests.length} max={999} color="secondary">
                             <NotificationsIcon />
                         </Badge>
                     </IconButton>
                     <IconButton className={cx(styles.icon, styles.settingsBtn)} title="Настройки">
                         <Settings />
                     </IconButton>
+
+                    <Notifications visible={notificationsVisible} />
                 </div>
             </div>
             <div className={styles.search}>

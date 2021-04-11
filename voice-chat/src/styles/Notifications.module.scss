@@ -1,0 +1,59 @@
+.main {
+    position: absolute;
+    z-index: 1300;
+    top: 4rem;
+    left: 4rem;
+    max-width: 75rem;
+
+    .paper {
+        background: #677bc4;
+        max-height: 29.6rem;
+        overflow-y: auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .empty {
+            color: #fff;
+            font-size: 1.6em;
+            height: 4rem;
+            width: 15rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 3rem 4.5rem;
+        }
+
+        .loading {
+            color: #fff;
+            margin: 3rem 10rem;
+        }
+
+        .item {
+            height: 5.92rem;
+
+            button {
+                font-size: 1.2rem;
+                color: #fff;
+                width: 22rem;
+                margin-left: 1rem;
+            }
+
+            .addFriend {
+                background: #43b581;
+
+                &:hover {
+                    background: #3ca374;
+                }
+            }
+
+            .cancelFriend {
+                background: #dc004e;
+
+                &:hover {
+                    background: #b90041;
+                }
+            }
+        }
+    }
+}

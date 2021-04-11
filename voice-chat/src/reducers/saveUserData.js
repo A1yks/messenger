@@ -27,17 +27,20 @@ function saveUserData(state = userDataInitState, action) {
     }
 
     if (action.type === 'ADD_CONTACT') {
-        console.log(action.contact);
         return {
             ...state,
             sentFriendRequests: state.sentFriendRequests.filter((id) => id !== action.contact.friendId),
             contacts: [...state.contacts, { ...action.contact }],
-            receivedFriendRequests: state.receivedFriendRequests.filter((id) => id !== action.contact.friendId),
+            receivedFriendRequests: state.receivedFriendRequests.filter(({ id }) => id !== action.contact.friendId),
         };
     }
 
     if (action.type === 'REMOVE_CONTACT') {
         return { ...state, contacts: state.contacts.filter(({ friendId: id }) => id !== action.friendId) };
+    }
+
+    if (action.type === 'NEW_FRIEND_REQUEST') {
+        return { ...state, receivedFriendRequests: [...state.receivedFriendRequests, ...action.users] };
     }
 
     return state;

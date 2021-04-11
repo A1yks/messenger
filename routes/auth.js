@@ -38,7 +38,7 @@ router.post('/register', async (req, res) => {
     try {
         await user.save();
         const token = jwt.sign({ id: user._id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
-        res.cookie('authToken', token, { maxAge: 600000 });
+        res.cookie('authToken', token, { maxAge: 1200000 });
         res.json({ success: true });
     } catch (err) {
         res.status(400).json({
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
         });
 
     const token = jwt.sign({ id: user._id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
-    res.cookie('authToken', token, { maxAge: 600000 });
+    res.cookie('authToken', token, { maxAge: 1200000 });
     res.json({ success: true });
 });
 

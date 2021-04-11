@@ -14,9 +14,7 @@ import getFormatString from '../functions/getFormatString';
 moment.locale('ru');
 
 function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
-    const [selectedBtn, setSelectedBtn] = useState('');
     const { profile, setProfile, messages, unreadMessages, readMessages } = useMainPageContext();
-    console.log(unreadMessages);
 
     useEffect(() => {
         if (showDate && profile.chatId !== '') {
@@ -24,6 +22,10 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
             readMessages(profile.chatId);
         }
     }, [profile.chatId, showDate]);
+
+    useEffect(() => {
+        if (selectedChat.id && unreadMessages[selectedChat.id] !== 0) readMessages(selectedChat.id);
+    });
 
     if (contacts.length === 0 && showDate) return <span className={styles.notFound}>Контакты не найдены</span>;
 
@@ -54,7 +56,7 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
                     }}
                 >
                     <div className={styles.wrapper}>
-                        <Account username={username} src={avatar} />
+                        <Account className={styles.account} username={username} src={avatar} />
                     </div>
                 </Button>
             );
@@ -77,14 +79,13 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
         return (
             <Button
                 key={i}
-                className={ex(styles.chatBlock, { [styles.selected]: selectedBtn === chatId })}
+                className={ex(styles.chatBlock, { [styles.selected]: selectedChat.id === chatId })}
                 onClick={() => {
                     setProfile((prev) => ({ ...prev, visible: !showDate, avatar, username, id, chatId }));
-                    setSelectedBtn(chatId);
                 }}
             >
                 <div className={styles.wrapper}>
-                    <Account username={username} src={avatar} message={text} />
+                    <Account className={styles.account} username={username} src={avatar} message={text} />
                     <Badge className={styles.newMessagesCount} badgeContent={chatNotifications} max={999} color="secondary" />
                     <span className={styles.date}>{date && moment(date).format(getFormatString(date))}</span>
                 </div>

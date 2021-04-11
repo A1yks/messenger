@@ -16,10 +16,11 @@ function SendMessage({ placeholder }) {
         if ((e.type === 'keydown' && e.key === 'Enter') || e.type === 'click') {
             e.preventDefault();
 
+            if (textFieldRef.current) textFieldRef.current.focus();
+
             if (value.trim() === '') return;
 
             setValue('');
-            if (textFieldRef.current) textFieldRef.current.focus();
             sendMessage(profile.chatId, value);
         }
     }

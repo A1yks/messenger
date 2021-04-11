@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Account from './Account';
 import Button from '@material-ui/core/Button';
 import styles from '../styles/Profile.module.scss';
@@ -6,9 +6,10 @@ import cx from 'classnames';
 import { useMainPageContext } from '../context/MainPageContext';
 import { connect } from 'react-redux';
 import { mapDispatchToProps } from '../functions/mapDispatchToProps';
+import { sendFriendRequest, cancelFriendRequest, acceptFriendRequest, removeFriend } from '../functions/friendRequests';
 
-function Profile({ userId, addFriendRequest, sentFriendRequests, receivedFriendRequests, contacts, removeFriendRequest, addContact, removeContact }) {
-    const { profile, setProfile } = useMainPageContext();
+function Profile({ addFriendRequest, sentFriendRequests, receivedFriendRequests, contacts, removeFriendRequest, addContact, removeContact }) {
+    const { profile, setProfile, sendFriendRequest: sendFriendRequestBySocket, removeFriendRequest: removeFriendRequestBySocket } = useMainPageContext();
 
     function closeModal(e) {
         if (e.target.classList.contains(styles.main)) {
@@ -16,69 +17,74 @@ function Profile({ userId, addFriendRequest, sentFriendRequests, receivedFriendR
         }
     }
 
-    async function sendFriendRequest() {
-        const request = await fetch('/api/chat/addFriend', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId,
-                friendId: profile.id,
-            }),
-        });
-        const { success } = await request.json();
+    // async function sendFriendRequest() {
+    //     const request = await fetch('/api/chat/addFriend', {
+    //         method: 'post',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             friendId: profile.id,
+    //         }),
+    //     });
+    //     const { success } = await request.json();
 
-        if (success) addFriendRequest(profile.id);
-    }
+    //     if (success) {
+    //         sendFriendRequestBySocket(profile.id);
+    //         addFriendRequest(profile.id);
+    //     }
+    // }
 
-    async function cancelFriendRequest() {
-        const request = await fetch('/api/chat/cancelFriendRequest', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId,
-                friendId: profile.id,
-            }),
-        });
-        const { success } = await request.json();
+    // async function cancelFriendRequest() {
+    //     const request = await fetch('/api/chat/cancelFriendRequest', {
+    //         method: 'post',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             friendId: profile.id,
+    //         }),
+    //     });
+    //     const { success } = await request.json();
 
-        if (success) removeFriendRequest(profile.id);
-    }
+    //     if (success) {
+    //         removeFriendRequestBySocket(profile.id);
+    //         removeFriendRequest(profile.id);
+    //     }
+    // }
 
-    async function acceptFriendRequest() {
-        const request = await fetch('/api/chat/acceptFriend', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId,
-                friendId: profile.id,
-            }),
-        });
-        const { success, chatId } = await request.json();
+    // async function acceptFriendRequest() {
+    //     const request = await fetch('/api/chat/acceptFriend', {
+    //         method: 'post',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             friendId: profile.id,
+    //         }),
+    //     });
+    //     const { success, chatId } = await request.json();
 
-        if (success) addContact({ friendId: profile.id, chatId });
-    }
+    //     if (success) {
+    //         removeFriendRequestBySocket(profile.id, true);
+    //         addContact({ friendId: profile.id, chatId });
+    //     }
+    // }
 
-    async function removeFriend() {
-        const request = await fetch('/api/chat/removeFriend', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId,
-                friendId: profile.id,
-            }),
-        });
-        const { success } = await request.json();
+    // async function removeFriend() {
+    //     const request = await fetch('/api/chat/removeFriend', {
+    //         method: 'post',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             friendId: profile.id,
+    //         }),
+    //     });
+    //     const { success } = await request.json();
 
-        if (success) removeContact(profile.id);
-    }
+    //     if (success) removeContact(profile.id);
+    // }
 
     if (!profile.visible) return '';
 
@@ -87,16 +93,28 @@ function Profile({ userId, addFriendRequest, sentFriendRequests, receivedFriendR
 
     if (contacts.find(({ friendId }) => friendId === profile.id)) {
         btnText = 'Удалить из друзей';
-        handleClick = removeFriend;
+        handleClick = () => removeFriend(profile.id, () => removeContact(profile.id));
     } else if (sentFriendRequests.includes(profile.id)) {
         btnText = 'Отменить заявку';
-        handleClick = cancelFriendRequest;
-    } else if (receivedFriendRequests.includes(profile.id)) {
+        handleClick = () =>
+            cancelFriendRequest(profile.id, () => {
+                removeFriendRequestBySocket(profile.id);
+                removeFriendRequest(profile.id);
+            });
+    } else if (receivedFriendRequests.find(({ id }) => id === profile.id)) {
         btnText = 'Принять заявку в друзья';
-        handleClick = acceptFriendRequest;
+        handleClick = () =>
+            acceptFriendRequest(profile.id, (chatId) => {
+                removeFriendRequestBySocket(profile.id, true);
+                addContact({ friendId: profile.id, chatId });
+            });
     } else {
         btnText = 'Добавить в друзья';
-        handleClick = sendFriendRequest;
+        handleClick = () =>
+            sendFriendRequest(profile.id, () => {
+                sendFriendRequestBySocket(profile.id);
+                addFriendRequest(profile.id);
+            });
     }
 
     return (

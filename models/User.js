@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
         receivedFriendRequests: [String],
         contacts: [contactSchema],
         notifications: [notificationSchema],
+        socketId: String,
     },
     { collection: 'users' }
 );

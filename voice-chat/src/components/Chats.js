@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Contacts from './Contacts';
 import styles from '../styles/Chats.module.scss';
 import { connect } from 'react-redux';
-import { CircularProgress } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { useMainPageContext } from '../context/MainPageContext';
 
 function Chats({ contacts, userId }) {
