@@ -39,6 +39,11 @@ function saveUserData(state = userDataInitState, action) {
         return { ...state, contacts: state.contacts.filter(({ friendId: id }) => id !== action.friendId) };
     }
 
+    if (action.type === 'REJECT_FRIEND_REQUEST') {
+        console.log(action.friendId);
+        return { ...state, receivedFriendRequests: state.receivedFriendRequests.filter(({ id }) => id !== action.friendId) };
+    }
+
     if (action.type === 'NEW_FRIEND_REQUEST') {
         return { ...state, receivedFriendRequests: [...state.receivedFriendRequests, ...action.users] };
     }

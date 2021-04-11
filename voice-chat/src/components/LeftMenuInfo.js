@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Settings from '@material-ui/icons/Settings';
@@ -23,7 +23,7 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
     const [searchQuery, setSearchQuery] = useState('');
     const [notificationsVisible, setNotificationsVisible] = useState(false);
     const [open, setOpen] = useState(false);
-    const { friendRequests } = useMainPageContext();
+    const { friendRequests, setSettingsOpened } = useMainPageContext();
 
     function search(e) {
         setSearchQuery(() => {
@@ -44,6 +44,10 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
         setNotificationsVisible((prev) => !prev);
     }
 
+    function toggleSettings() {
+        setSettingsOpened((prev) => !prev);
+    }
+
     return (
         <div className={styles.main}>
             <div className={styles.account}>
@@ -57,7 +61,7 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
                             <NotificationsIcon />
                         </Badge>
                     </IconButton>
-                    <IconButton className={cx(styles.icon, styles.settingsBtn)} title="Настройки">
+                    <IconButton className={cx(styles.icon, styles.settingsBtn)} title="Настройки" onClick={toggleSettings}>
                         <Settings />
                     </IconButton>
 

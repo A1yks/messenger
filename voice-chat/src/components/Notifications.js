@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -9,9 +9,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { useMainPageContext } from '../context/MainPageContext';
 import { connect } from 'react-redux';
 import { mapDispatchToProps } from '../functions/mapDispatchToProps';
+import { acceptFriendRequest, rejectFriendRequest } from '../functions/friendRequests';
 
-function Notifications({ visible, receivedFriendRequests, saveFriendRequests }) {
-    const { friendRequests, removeFriendRequestNotifications } = useMainPageContext();
+function Notifications({ visible, receivedFriendRequests, saveFriendRequests, addContact, rejectFriend }) {
+    const { friendRequests, removeFriendRequestNotifications, removeFriendRequest: removeFriendRequestBySocket } = useMainPageContext();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -45,11 +46,31 @@ function Notifications({ visible, receivedFriendRequests, saveFriendRequests }) 
                     <span className={styles.empty}>Уведомлений нет</span>
                 ) : (
                     <List>
-                        {receivedFriendRequests.map(({ username, avatar }, i) => (
+                        {receivedFriendRequests.map(({ username, avatar, id }, i) => (
                             <ListItem key={i} className={styles.item}>
                                 <Account username={username} src={avatar} />
-                                <Button className={styles.addFriend}>Принять заявку в друзья</Button>
-                                <Button className={styles.cancelFriend}>Отклонить заявку в друзья</Button>
+                                <Button
+                                    onClick={() =>
+                                        acceptFriendRequest(id, (chatId) => {
+                                            removeFriendRequestBySocket(id, true);
+                                            addContact({ friendId: id, chatId });
+                                        })
+                                    }
+                                    className={styles.addFriend}
+                                >
+                                    Принять заявку в друзья
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        rejectFriendRequest(id, () => {
+                                            removeFriendRequestBySocket(id, true);
+                                            rejectFriend(id);
+                                        })
+                                    }
+                                    className={styles.cancelFriend}
+                                >
+                                    Отклонить заявку в друзья
+                                </Button>
                             </ListItem>
                         ))}
                     </List>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Account from './Account';
 import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
@@ -14,7 +14,7 @@ import getFormatString from '../functions/getFormatString';
 moment.locale('ru');
 
 function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
-    const { profile, setProfile, messages, unreadMessages, readMessages } = useMainPageContext();
+    const { profile, setProfile, messages, unreadMessages, readMessages, setSettingsOpened } = useMainPageContext();
 
     useEffect(() => {
         if (showDate && profile.chatId !== '') {
@@ -82,6 +82,7 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
                 className={ex(styles.chatBlock, { [styles.selected]: selectedChat.id === chatId })}
                 onClick={() => {
                     setProfile((prev) => ({ ...prev, visible: !showDate, avatar, username, id, chatId }));
+                    setSettingsOpened(false);
                 }}
             >
                 <div className={styles.wrapper}>

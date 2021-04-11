@@ -24,6 +24,8 @@ export function MainPageContextProvider({ children }) {
         isFriend: false,
     });
 
+    const [settingsOpened, setSettingsOpened] = useState(false);
+
     const {
         joinChat,
         sendMessage,
@@ -63,6 +65,8 @@ export function MainPageContextProvider({ children }) {
                 removeFriendRequestNotifications,
                 sendFriendRequest,
                 removeFriendRequest,
+                settingsOpened,
+                setSettingsOpened,
             }}
         >
             {children}

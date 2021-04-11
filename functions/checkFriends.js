@@ -1,19 +1,19 @@
 const User = require('../models/User');
 
-async function checkFriends(userId, friendId) {
+async function checkFriends(param1, param2) {
     let user, friend;
+    let userId, friendId;
 
-    if (typeof userId === 'string') user = await User.findById(userId);
-    else user = userId;
+    if (typeof param1 === 'string') user = await User.findById(param1);
+    else user = param1;
 
-    if (user === null) return { success: false, message: 'Пользователь 1 не найден' };
+    if (typeof param2 === 'string') friend = await User.findById(param2);
+    else friend = param2;
 
-    if (typeof friendId === 'string') friend = await User.findById(friendId);
-    else friend = friendId;
+    userId = user._id.toString();
+    friendId = friend._id.toString();
 
-    if (friend === null) return { success: false, message: 'Пользователь 2 не найден' };
-
-    return user.contacts.find(({ friendId: id }) => id === friendId) !== undefined && !!user.contacts.find(({ friendId: id }) => id === userId) !== undefined;
+    return user.contacts.find(({ friendId: id }) => id === friendId) !== undefined && friend.contacts.find(({ friendId: id }) => id === userId) !== undefined;
 }
 
 module.exports = checkFriends;

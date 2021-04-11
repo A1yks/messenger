@@ -8,15 +8,15 @@ import { MainPageContextProvider } from '../context/MainPageContext';
 function Main() {
     return (
         <Switch>
-            <Route exact path="/">
-                <MainPageContextProvider>
-                    <ChatMainPage />
-                </MainPageContextProvider>
-            </Route>
             <Route path="/auth">
                 <AuthContextProvider>
                     <Auth />
                 </AuthContextProvider>
+            </Route>
+            <Route path="/">
+                <MainPageContextProvider>
+                    <ChatMainPage />
+                </MainPageContextProvider>
             </Route>
         </Switch>
     );

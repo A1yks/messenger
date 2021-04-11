@@ -57,3 +57,18 @@ export async function removeFriend(friendId, callback) {
 
     if (success) callback();
 }
+
+export async function rejectFriendRequest(friendId, callback) {
+    const request = await fetch('/api/chat/rejectFriend', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            friendId,
+        }),
+    });
+    const { success } = await request.json();
+
+    if (success) callback();
+}
