@@ -18,4 +18,3 @@
 .env.production.local
 .env
 npm-debug.log*
-images/*
