@@ -58,7 +58,7 @@ export function AuthContextProvider({ children }) {
         if (type.current === 'signUp') {
             if (Object.values(errors.signUp).every((value) => value === '')) {
                 setState((prev) => ({ ...prev, loading: true }));
-                fetch('/api/auth/register', {
+                fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/register`, {
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
@@ -67,6 +67,7 @@ export function AuthContextProvider({ children }) {
                         username: state.login,
                         password: state.password,
                     }),
+                    credentials: 'include',
                 })
                     .then((res) => res.json())
                     .then(({ success, message }) => {
@@ -83,7 +84,7 @@ export function AuthContextProvider({ children }) {
         } else if (type.current === 'signIn') {
             if (errors.signIn.login === '' && errors.signIn.password === '') {
                 setState((prev) => ({ ...prev, loading: true }));
-                fetch('/api/auth/login', {
+                fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/login`, {
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
@@ -92,6 +93,7 @@ export function AuthContextProvider({ children }) {
                         username: state.login,
                         password: state.password,
                     }),
+                    credentials: 'include',
                 })
                     .then((res) => res.json())
                     .then(({ success, message }) => {

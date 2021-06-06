@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Settings from '@material-ui/icons/Settings';
@@ -24,6 +24,7 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
     const [notificationsVisible, setNotificationsVisible] = useState(false);
     const [open, setOpen] = useState(false);
     const { friendRequests, setSettingsOpened } = useMainPageContext();
+    const iconBtnRef = useRef(null);
 
     function search(e) {
         setSearchQuery(() => {
@@ -56,7 +57,7 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
                     <IconButton onClick={handleOpen} className={cx(styles.icon, styles.exitBtn)} title="Выход">
                         <ExitToAppIcon />
                     </IconButton>
-                    <IconButton className={cx(styles.icon, styles.notificationsBtn)} title="Уведомления" onClick={toggleNotifications}>
+                    <IconButton ref={iconBtnRef} className={cx(styles.icon, styles.notificationsBtn)} title="Уведомления" onClick={toggleNotifications}>
                         <Badge className={styles.notificationsCount} badgeContent={friendRequests.length} max={999} color="secondary">
                             <NotificationsIcon />
                         </Badge>
@@ -65,7 +66,7 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
                         <Settings />
                     </IconButton>
 
-                    <Notifications visible={notificationsVisible} />
+                    <Notifications visible={notificationsVisible} setNotificationsVisible={setNotificationsVisible} iconBtnRef={iconBtnRef} />
                 </div>
             </div>
             <div className={styles.search}>
@@ -80,6 +81,10 @@ function LeftMenuInfo({ username, avatar, searchUsers, searchResults, logout }) 
                     }}
                     value={searchQuery}
                     onChange={search}
+                    autoComplete="organization"
+                    readOnly={true}
+                    onBlur={(e) => (e.target.readOnly = true)}
+                    onFocus={(e) => (e.target.readOnly = false)}
                 />
             </div>
             <div className={styles.contacts} style={{ marginTop: searchResults.length === 0 ? '0' : '1.8rem' }}>

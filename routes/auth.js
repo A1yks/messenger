@@ -1,9 +1,10 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const Token = require('../models/Token');
 const joi = require('@hapi/joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { verifyToken } = require('../functions/tokens');
+const { verifyToken, getAccessToken, getRefreshToken, updateTokens } = require('../functions/tokens');
 
 const schema = joi.object({
     username: joi.string().min(4).max(25).required(),
@@ -11,10 +12,42 @@ const schema = joi.object({
 });
 
 router.get('/verify-token', verifyToken, (req, res) => {
-    res.json({ success: true, userId: req.user.id, username: req.user.username });
+    res.json({ success: true, userId: req.user.id, username: req.user.username, exp: req.user.exp });
 });
 
-router.post('/register', async (req, res) => {
+router.get('/refresh-tokens', (req, res) => {
+    const { refreshToken } = req.cookies;
+
+    if (refreshToken) {
+        try {
+            const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+            if (payload.type !== 'refresh') return res.status(400).json({ success: false, message: 'Невалидный токен' });
+
+            Token.findOne({ _id: payload.tokenId })
+                .exec()
+                .then(async (token) => {
+                    if (token === null) throw new Error('Невалидный токен');
+
+                    return await updateTokens(payload.id, payload.tokenId);
+                })
+                .then((tokens) => {
+                    const exp = 24 * 60 * 60 * 1000;
+                    res.cookie('authToken', tokens.accessToken, { maxAge: exp });
+                    res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 60 * 60 * 24 * 1000 });
+                    res.json({ success: true, exp: Math.floor((Date.now() + exp) / 1000) });
+                })
+                .catch((err) => res.status(400).json({ success: false, message: err.message }));
+        } catch (err) {
+            if (err instanceof jwt.TokenExpiredError) return res.status(400).json({ success: false, message: 'Время действия токена истекло' });
+            return res.status(400).json({ success: false, message: 'Невалидный токен' });
+        }
+    } else {
+        return res.status(400).json({ success: false, message: 'Invalid token!' });
+    }
+});
+
+router.post('/register', async function register(req, res) {
     const { error } = schema.validate(req.body);
     if (error) return res.status(400).json({ success: false, message: error.details[0].message });
 
@@ -37,11 +70,14 @@ router.post('/register', async (req, res) => {
 
     try {
         await user.save();
-        const token = jwt.sign({ id: user._id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
-        res.cookie('authToken', token, { maxAge: 1200000 });
-        res.json({ success: true });
+        const token = getAccessToken(user._id, user.username);
+        const refreshToken = await getRefreshToken(user._id, user.username);
+        const exp = 24 * 60 * 60 * 1000;
+        res.cookie('authToken', token, { maxAge: exp });
+        res.cookie('refreshToken', refreshToken, { maxAge: 30 * 60 * 60 * 24 * 1000 });
+        res.json({ success: true, exp: Math.floor((Date.now() + exp) / 1000) });
     } catch (err) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
             message: 'Произошла ошибка при попытке создания нового пользователя',
         });
@@ -70,9 +106,12 @@ router.post('/login', async (req, res) => {
             message: 'Неверный логин или пароль',
         });
 
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '10min' });
-    res.cookie('authToken', token, { maxAge: 1200000 });
-    res.json({ success: true });
+    const token = getAccessToken(user._id, user.username);
+    const refreshToken = await getRefreshToken(user._id, user.username);
+    const exp = 24 * 60 * 60 * 1000;
+    res.cookie('authToken', token, { maxAge: exp });
+    res.cookie('refreshToken', refreshToken, { maxAge: 30 * 60 * 60 * 24 * 1000 });
+    res.json({ success: true, exp: Math.floor((Date.now() + exp) / 1000) });
 });
 
 module.exports = router;

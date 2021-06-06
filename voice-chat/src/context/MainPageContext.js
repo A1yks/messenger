@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
-import history from '../history';
 import checkToken from '../functions/checkToken';
 import useChat from '../hooks/useChat';
+import { connect } from 'react-redux';
+import { mapDispatchToProps } from '../functions/mapDispatchToProps';
+import checkRefreshToken from '../functions/checkRefreshToken';
 
 export const MainPageContext = React.createContext();
 
 export const useMainPageContext = () => useContext(MainPageContext);
 
-export function MainPageContextProvider({ children }) {
+function MainPageContextProvider({ children, aesKeys, logout, contactsCount }) {
     const [state, setState] = useState({
         autoLogin: true,
         userId: '',
         username: '',
+        keysLoaded: false,
     });
 
     const [profile, setProfile] = useState({
@@ -31,6 +34,8 @@ export function MainPageContextProvider({ children }) {
         sendMessage,
         messages,
         unreadMessages,
+        online,
+        loadMessages,
         readMessages,
         setLoading: setChatLoading,
         loading: chatLoading,
@@ -38,26 +43,49 @@ export function MainPageContextProvider({ children }) {
         removeFriendRequestNotifications,
         sendFriendRequest,
         removeFriendRequest,
-    } = useChat(state.username, state.userId);
+        acceptFriendRequest,
+        deleteFriend,
+        cancelFriendRequest,
+    } = useChat(state.username, state.userId, setProfile);
 
     useEffect(() => {
+        let timer;
+
         (async () => {
-            const { success, userId, username } = await checkToken();
-            if (!success) return history.push('/auth/login');
+            const { success, userId, username, exp } = await checkToken();
+            console.log(exp, (exp * 1000 - Date.now()) * 0.8);
+            if (!success) return logout();
+
+            const callback = async () => {
+                const { success, exp } = await checkRefreshToken();
+                if (!success) return logout();
+                else {
+                    console.log(success, exp);
+                    timer = setTimeout(callback, (exp * 1000 - Date.now()) * 0.8);
+                }
+            };
+
+            timer = setTimeout(callback, (exp * 1000 - Date.now()) * 0.8);
+
             setState((prev) => ({ ...prev, autoLogin: false, userId, username }));
         })();
+
+        return () => timer && clearTimeout(timer);
     }, []);
 
     return (
         <MainPageContext.Provider
             value={{
                 state,
+                setState,
                 profile,
                 setProfile,
                 joinChat,
                 sendMessage,
                 messages,
                 unreadMessages,
+                online,
+                loadMessages,
                 readMessages,
                 setChatLoading,
                 chatLoading,
@@ -65,11 +93,18 @@ export function MainPageContextProvider({ children }) {
                 removeFriendRequestNotifications,
                 sendFriendRequest,
                 removeFriendRequest,
+                acceptFriendRequest,
                 settingsOpened,
                 setSettingsOpened,
+                deleteFriend,
+                cancelFriendRequest,
             }}
         >
             {children}
         </MainPageContext.Provider>
     );
 }
+
+MainPageContextProvider = connect((state) => ({ aesKeys: state.keys, contactsCount: state.userData.contacts.length }), mapDispatchToProps)(MainPageContextProvider);
+
+export { MainPageContextProvider };

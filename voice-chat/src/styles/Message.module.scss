@@ -23,6 +23,7 @@
                 margin-left: 1rem;
                 font-size: 1.2rem;
                 color: rgba(0, 0, 0, 0.6);
+                user-select: none;
             }
         }
 
@@ -32,6 +33,7 @@
             padding: 1.2rem 1.6rem;
             border-radius: 5px;
             margin-top: 1rem;
+            word-break: break-all;
         }
     }
 

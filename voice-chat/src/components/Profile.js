@@ -7,9 +7,17 @@ import { useMainPageContext } from '../context/MainPageContext';
 import { connect } from 'react-redux';
 import { mapDispatchToProps } from '../functions/mapDispatchToProps';
 import { sendFriendRequest, cancelFriendRequest, acceptFriendRequest, removeFriend } from '../functions/friendRequests';
+import { getAesKeys } from '../functions/keys';
 
-function Profile({ addFriendRequest, sentFriendRequests, receivedFriendRequests, contacts, removeFriendRequest, addContact, removeContact }) {
-    const { profile, setProfile, sendFriendRequest: sendFriendRequestBySocket, removeFriendRequest: removeFriendRequestBySocket } = useMainPageContext();
+function Profile({ addFriendRequest, sentFriendRequests, receivedFriendRequests, contacts, removeFriendRequest, addContact, removeContact, removeKey, getKeys, closeChat }) {
+    const {
+        profile,
+        setProfile,
+        sendFriendRequest: sendFriendRequestBySocket,
+        removeFriendRequest: removeFriendRequestBySocket,
+        acceptFriendRequest: acceptFriendRequestBySocket,
+        deleteFriend: deleteFriendBySocket,
+    } = useMainPageContext();
 
     function closeModal(e) {
         if (e.target.classList.contains(styles.main)) {
@@ -24,7 +32,14 @@ function Profile({ addFriendRequest, sentFriendRequests, receivedFriendRequests,
 
     if (contacts.find(({ friendId }) => friendId === profile.id)) {
         btnText = 'Удалить из друзей';
-        handleClick = () => removeFriend(profile.id, () => removeContact(profile.id));
+        handleClick = () =>
+            removeFriend(profile.id, () => {
+                removeContact(profile.id);
+                removeKey(contacts.find(({ friendId }) => friendId === profile.id).chatId);
+                deleteFriendBySocket(profile.id);
+                setProfile((prev) => ({ ...prev, visible: false, avatar: '', username: '', id: '', chatId: '', requestSent: false, isFriend: false }));
+                closeChat();
+            });
     } else if (sentFriendRequests.includes(profile.id)) {
         btnText = 'Отменить заявку';
         handleClick = () =>
@@ -36,8 +51,11 @@ function Profile({ addFriendRequest, sentFriendRequests, receivedFriendRequests,
         btnText = 'Принять заявку в друзья';
         handleClick = () =>
             acceptFriendRequest(profile.id, (chatId) => {
-                removeFriendRequestBySocket(profile.id, true);
-                addContact({ friendId: profile.id, chatId });
+                getAesKeys(getKeys, () => {
+                    removeFriendRequestBySocket(profile.id, true);
+                    addContact({ friendId: profile.id, chatId });
+                    acceptFriendRequestBySocket(profile.id);
+                });
             });
     } else {
         btnText = 'Добавить в друзья';

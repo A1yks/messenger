@@ -17,6 +17,9 @@ function ChatBody({ user, friend, selectedChat }) {
         }
     }, [messages[selectedChat.id].length]);
 
+    const userAvatar = user.avatar === process.env.REACT_APP_SERVER_URL ? '' : user.avatar;
+    const friendAvatar = friend.avatar === process.env.REACT_APP_SERVER_URL ? '' : friend.avatar;
+
     return (
         <div className={styles.main}>
             <div className={styles.messagesWrapper} ref={messagesWrapperRef}>
@@ -27,9 +30,9 @@ function ChatBody({ user, friend, selectedChat }) {
                         messages[selectedChat.id].map(({ from, body, date }, i) => (
                             <Message
                                 key={i}
-                                username={from}
-                                isUser={from !== user.username}
-                                avatar={from === user.username ? user.avatar : friend.avatar}
+                                username={from.username}
+                                isUser={from.username !== user.username}
+                                avatar={from.username === user.username ? userAvatar : friendAvatar}
                                 date={moment(date).format(getFormatString(date))}
                             >
                                 {body}

@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const User = require('../models/User');
-const Conversation = require('../models/Conversation');
 const { verifyToken } = require('../functions/tokens');
 const checkFriends = require('../functions/checkFriends');
 const createChat = require('../functions/createChat');
@@ -74,7 +73,7 @@ router.post('/cancelFriendRequest', verifyToken, async (req, res) => {
 
     const friends = await checkFriends(user, friend);
 
-    if (friends || !friend.receivedFriendRequests.includes(userId)) res.status(500).json({ success: false, message: 'Возникла ошибка при попытке отменить запрос добавление в друзья' });
+    if (friends || !friend.receivedFriendRequests.includes(userId)) res.status(500).json({ success: false, message: 'Возникла ошибка при попытке отменить запрос на добавление в друзья' });
 
     user.sentFriendRequests = user.sentFriendRequests.filter((id) => id !== friendId);
     friend.receivedFriendRequests = friend.receivedFriendRequests.filter((id) => id !== userId);
@@ -83,7 +82,7 @@ router.post('/cancelFriendRequest', verifyToken, async (req, res) => {
         await Promise.all([user.save(), friend.save()]);
         res.json({ success: true });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Возникла ошибка при попытке отменить запрос добавление в друзья' });
+        res.status(500).json({ success: false, message: 'Возникла ошибка при попытке отменить запрос на добавление в друзья' });
     }
 });
 
@@ -181,37 +180,6 @@ router.get('/search/:username?', verifyToken, async (req, res) => {
         }));
 
     res.json({ success: true, users });
-});
-
-router.post('/access', verifyToken, async (req, res) => {
-    const { friendId, skipNumber } = req.body;
-    const friends = await checkFriends(userId, friendId);
-
-    if (!friends) return res.status(403).json({ success: false, message: 'Возникла ошибка при попытке получить доступ к беседе' });
-
-    const chat = await Conversation.findOne({ members: { $all: [userId, friendId] } }, { messages: { $slice: [skipNumber, 30] } });
-
-    if (chat === null) return res.status(404).json({ succes: false, message: 'Чат не найден' });
-
-    res.json({ success: true, chat: chat.toClient() });
-    // if (chat !== null) {
-    //     res.json({
-    //         success: true,
-    //         chat: chat.toClient(),
-    //     });
-    // } else {
-    //     const chat = new Conversation({
-    //         members: [userId, friendId],
-    //         date: new Date(),
-    //     });
-
-    //     try {
-    //         await chat.save();
-    //         res.json({ success: true, chat: chat.toClient() });
-    //     } catch (err) {
-    //         res.json({ success: false, message: 'Возникла ошибка при попытке создать беседу' });
-    //     }
-    // }
 });
 
 router.post('/uploadImage', verifyToken, (req, res) => {

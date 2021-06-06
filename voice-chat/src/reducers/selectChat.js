@@ -13,6 +13,10 @@ function selectChat(state = selectedChatInitState, action) {
         return selectedChatInitState;
     }
 
+    if (action.type === 'LOAD_MESSAGES') {
+        return { ...state, messagesCount: action.messagesCount };
+    }
+
     return state;
 }
 

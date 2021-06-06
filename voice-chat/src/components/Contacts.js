@@ -13,18 +13,18 @@ import getFormatString from '../functions/getFormatString';
 
 moment.locale('ru');
 
-function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
-    const { profile, setProfile, messages, unreadMessages, readMessages, setSettingsOpened } = useMainPageContext();
+function Contacts({ showDate, contacts, selectChat, selectedChat }) {
+    const { profile, setProfile, messages, unreadMessages, online, readMessages, setSettingsOpened } = useMainPageContext();
 
     useEffect(() => {
         if (showDate && profile.chatId !== '') {
-            selectChat({ friend: profile, id: profile.chatId });
+            selectChat({ friend: profile, id: profile.chatId, messagesCount: 30 });
             readMessages(profile.chatId);
         }
     }, [profile.chatId, showDate]);
 
     useEffect(() => {
-        if (selectedChat.id && unreadMessages[selectedChat.id] !== 0) readMessages(selectedChat.id);
+        if (selectedChat.id && unreadMessages[selectedChat.id] > 0) readMessages(selectedChat.id);
     });
 
     if (contacts.length === 0 && showDate) return <span className={styles.notFound}>Контакты не найдены</span>;
@@ -42,10 +42,11 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
 
             if (date1 && date2) return new Date(date2).getTime() - new Date(date1).getTime();
 
-            return 0;
+            return 1;
         });
 
     return sorted.map(({ username, avatar, id, chatId }, i) => {
+        avatar = process.env.REACT_APP_SERVER_URL + avatar;
         if (chatId === undefined)
             return (
                 <Button
@@ -56,7 +57,7 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
                     }}
                 >
                     <div className={styles.wrapper}>
-                        <Account className={styles.account} username={username} src={avatar} />
+                        <Account className={styles.account} username={username} src={avatar} online={online[id]} />
                     </div>
                 </Button>
             );
@@ -69,7 +70,7 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
         const text =
             from && body ? (
                 <>
-                    <span className={styles.fromUser}>{from}:</span>
+                    <span className={styles.fromUser}>{from.username}:</span>
                     <span className={styles.msgText}>{body}</span>
                 </>
             ) : (
@@ -86,9 +87,11 @@ function Contacts({ showDate, contacts, user, selectChat, selectedChat }) {
                 }}
             >
                 <div className={styles.wrapper}>
-                    <Account className={styles.account} username={username} src={avatar} message={text} />
-                    <Badge className={styles.newMessagesCount} badgeContent={chatNotifications} max={999} color="secondary" />
-                    <span className={styles.date}>{date && moment(date).format(getFormatString(date))}</span>
+                    <Account className={styles.account} username={username} src={avatar} message={text} online={online[id]} />
+                    <div className={styles.badgeWrapper}>
+                        <Badge className={styles.newMessagesCount} badgeContent={chatNotifications} max={999} color="secondary" />
+                        <span className={styles.date}>{date && moment(date).format(getFormatString(date))}</span>
+                    </div>
                 </div>
             </Button>
         );

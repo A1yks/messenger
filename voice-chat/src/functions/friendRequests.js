@@ -1,5 +1,5 @@
 export async function sendFriendRequest(friendId, callback) {
-    const request = await fetch('/api/chat/addFriend', {
+    const request = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/chat/addFriend`, {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
@@ -7,6 +7,7 @@ export async function sendFriendRequest(friendId, callback) {
         body: JSON.stringify({
             friendId,
         }),
+        credentials: 'include',
     });
     const { success } = await request.json();
 
@@ -14,7 +15,7 @@ export async function sendFriendRequest(friendId, callback) {
 }
 
 export async function cancelFriendRequest(friendId, callback) {
-    const request = await fetch('/api/chat/cancelFriendRequest', {
+    const request = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/chat/cancelFriendRequest`, {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
@@ -22,6 +23,7 @@ export async function cancelFriendRequest(friendId, callback) {
         body: JSON.stringify({
             friendId,
         }),
+        credentials: 'include',
     });
     const { success } = await request.json();
 
@@ -29,7 +31,7 @@ export async function cancelFriendRequest(friendId, callback) {
 }
 
 export async function acceptFriendRequest(friendId, callback) {
-    const request = await fetch('/api/chat/acceptFriend', {
+    const request = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/chat/acceptFriend`, {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
@@ -37,6 +39,7 @@ export async function acceptFriendRequest(friendId, callback) {
         body: JSON.stringify({
             friendId,
         }),
+        credentials: 'include',
     });
     const { success, chatId } = await request.json();
 
@@ -44,7 +47,7 @@ export async function acceptFriendRequest(friendId, callback) {
 }
 
 export async function removeFriend(friendId, callback) {
-    const request = await fetch('/api/chat/removeFriend', {
+    const request = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/chat/removeFriend`, {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
@@ -52,6 +55,7 @@ export async function removeFriend(friendId, callback) {
         body: JSON.stringify({
             friendId,
         }),
+        credentials: 'include',
     });
     const { success } = await request.json();
 
@@ -59,7 +63,7 @@ export async function removeFriend(friendId, callback) {
 }
 
 export async function rejectFriendRequest(friendId, callback) {
-    const request = await fetch('/api/chat/rejectFriend', {
+    const request = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/chat/rejectFriend`, {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
@@ -67,6 +71,7 @@ export async function rejectFriendRequest(friendId, callback) {
         body: JSON.stringify({
             friendId,
         }),
+        credentials: 'include',
     });
     const { success } = await request.json();
 

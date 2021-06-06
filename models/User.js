@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
         notifications: [notificationSchema],
         socketId: String,
     },
-    { collection: 'users' }
+    { collection: 'users', versionKey: false }
 );
 
 module.exports = mongoose.model('User', userSchema);

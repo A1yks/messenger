@@ -8,7 +8,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import styles from '../styles/Navbar.module.scss';
 import { useMainPageContext } from '../context/MainPageContext';
 
-function Navbar({ name, onClose, phoneIcon, children }) {
+function Navbar({ name, online, onClose, phoneIcon, children }) {
     const { setProfile } = useMainPageContext();
 
     function handleClose() {
@@ -24,6 +24,7 @@ function Navbar({ name, onClose, phoneIcon, children }) {
                     <Typography className={styles.title} variant="h6" noWrap>
                         {name}
                     </Typography>
+                    {online !== undefined && <span className={styles.online}>{online ? 'В сети' : 'Не в сети'}</span>}
                 </div>
                 <div className={styles.icons}>
                     {phoneIcon && (

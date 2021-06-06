@@ -27,7 +27,15 @@
     }
 
     .emptyHistory {
-        font-size: 2.6rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         margin: auto;
+        font-size: 1.6rem;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 50px;
+        padding: 5px 15px;
+        user-select: none;
     }
 }

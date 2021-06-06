@@ -12,6 +12,7 @@ export const userDataInitState = {
 function saveUserData(state = userDataInitState, action) {
     if (action.type === 'SAVE_USER_DATA') {
         const userData = { ...action.userData };
+        userData.avatar = process.env.REACT_APP_SERVER_URL + userData.avatar;
         userData.messageNotifications = userData.notifications.filter(({ type }) => type === 'NEW_MESSAGE');
         userData.friendNotifications = userData.notifications.filter(({ type }) => type === 'FRIEND_REQUEST');
         delete userData.notifications;
@@ -40,7 +41,6 @@ function saveUserData(state = userDataInitState, action) {
     }
 
     if (action.type === 'REJECT_FRIEND_REQUEST') {
-        console.log(action.friendId);
         return { ...state, receivedFriendRequests: state.receivedFriendRequests.filter(({ id }) => id !== action.friendId) };
     }
 

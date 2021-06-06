@@ -1,0 +1,24 @@
+.main {
+    width: 50rem;
+
+    .title h2 {
+        font-size: 1.8rem;
+    }
+
+    .content {
+        .info {
+            font-size: 1.5rem;
+        }
+
+        input,
+        label {
+            font-size: 1.5rem;
+        }
+    }
+
+    .actions {
+        button {
+            font-size: 1.3rem;
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "messenger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./electron/main.js",
+  "scripts": {
+    "package": "electron-packager . Messenger --asar --icon=icon.ico --platform=win32 --arch=x64 --overwrite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-rsa": "^1.1.1"
+  }
+}

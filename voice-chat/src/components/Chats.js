@@ -4,19 +4,20 @@ import styles from '../styles/Chats.module.scss';
 import { connect } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useMainPageContext } from '../context/MainPageContext';
+import { mapDispatchToProps } from '../functions/mapDispatchToProps';
 
-function Chats({ contacts, userId }) {
+function Chats({ contacts, userId, keysLoaded, aesKeys }) {
     const [friends, setFriends] = useState([]);
     const [loading, setLoading] = useState(true);
     const { joinChat } = useMainPageContext();
 
     useEffect(() => {
-        if (userId !== '') {
+        if (userId !== '' && keysLoaded) {
             const arr = [];
             contacts.forEach(({ friendId, chatId }) => {
                 joinChat(chatId);
                 arr.push(
-                    fetch(`/api/chat/getUser/${friendId}`)
+                    fetch(`${process.env.REACT_APP_SERVER_URL}/api/chat/getUser/${friendId}`, { credentials: 'include' })
                         .then((res) => res.json())
                         .then((json) => ({ ...json.userData, chatId }))
                 );
@@ -26,7 +27,7 @@ function Chats({ contacts, userId }) {
                 setLoading(false);
             });
         }
-    }, [userId, contacts]);
+    }, [userId, contacts, keysLoaded]);
 
     return (
         <div className={styles.main}>
@@ -48,6 +49,8 @@ export default connect(
     (state) => ({
         contacts: state.userData.contacts,
         userId: state.userData.id,
+        aesKeys: state.keys,
+        keysLoaded: Object.keys(state.keys).length === state.userData.contacts.length,
     }),
-    null
+    mapDispatchToProps
 )(Chats);

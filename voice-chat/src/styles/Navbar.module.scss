@@ -1,6 +1,7 @@
 .appBar {
     background: #677bc4;
     border-left: 1px solid #5b6ca8;
+    box-shadow: none;
 
     svg {
         height: 2.4rem;
@@ -20,6 +21,14 @@
             .title {
                 font-size: 2rem;
                 margin-left: 1.2rem;
+                user-select: none;
+            }
+
+            .online {
+                color: #2af1ff;
+                font-size: 1.4rem;
+                margin-left: 1rem;
+                user-select: none;
             }
         }
 

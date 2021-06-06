@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
-  "main": "src/electron-start.js",
-  "proxy": "http://localhost:3001",
+  "main": "public/electron/main.js",
   "dependencies": {
     "@babel/core": "^7.13.10",
     "@material-ui/core": "^4.11.3",
@@ -12,11 +11,16 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.3",
+    "aes256": "^1.1.0",
     "classnames": "^2.3.1",
+    "custom-electron-titlebar": "^3.2.7",
     "fontsource-roboto": "^4.0.0",
     "history": "^4.10.1",
     "moment": "^2.29.1",
+    "node-rsa": "^1.1.1",
     "node-sass": "^5.0.0",
+    "notistack": "^1.0.7",
+    "peerjs": "^1.3.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.3",
@@ -34,7 +38,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
-    "electron": "electron ."
+    "electron": "electron .",
+    "package": "electron-packager . Messenger --asar --icon=./build/icon512.ico --platform=win32 --arch=x64 --overwrite"
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +60,8 @@
     ]
   },
   "devDependencies": {
-    "electron": "^12.0.1"
+    "electron": "^12.0.1",
+    "electron-packager": "^15.2.0",
+    "electron-reloader": "^1.2.1"
   }
 }

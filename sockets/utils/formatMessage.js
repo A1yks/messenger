@@ -1,6 +1,6 @@
 function formatMessage(username, chatId, text) {
     return {
-        from: username,
+        from: { username },
         chatId,
         body: text,
         date: new Date(),
